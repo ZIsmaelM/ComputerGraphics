@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+This scene permits to test spectral integration of the spectraly antialiased
+iridescent BRDF model.
+
+If the thin film's height is very large, then there is no longer any chromatic
+changes due to iridescence. Since we are testing with a small roughness (hence
+almost no shadowing/masking) we should get a gray image.
+
+Since mitsuba use a discrete number of spectral samples, you might experience
+some ringing artifacts (spectral aliasing with respect to view direction) for
+the non-antialiased versions.
+-->
+<scene version="0.5.0">
+	<integrator type="path"/>
+
+	<shape type="rectangle">
+		<transform name="toWorld">
+			<scale x="30" y="30" z="30"/>						
+			<rotate x="1" angle="-90"/>
+			<rotate y="1" angle="-45"/>
+			<translate x="10" y="0" z="10"/>
+		</transform>
+	<bsdf type="diffuse"/>
+	</shape>
+		
+    <!-- OBJECT PARAMETERS -->
+	<shape type="obj">
+		<string name="filename" value="killeroo.obj"/>
+		<transform name="killeroo">
+			<scale x="0.5" y="0.5" z="0.5"/>			
+			<rotate z="1" angle="-60"/>			
+			<translate x="100" y="200" z="-140"/>
+		</transform>
+      <bsdf type="irid">
+         <!-- Set this parameter to `false` to use the naive model -->
+         <boolean name="spectralAntialiasing" value="true"/>
+
+         <!-- `eta` and `k` specify the complex IOR of the base layer -->
+         <spectrum name="eta"  value="3" />
+         <spectrum name="k"    value="0.00" />
+
+         <!-- `filmEta` and `height` specify the IOR of the film and
+              its thickness in nanometers -->
+         <spectrum name="filmEta"  value="1.50" /> 	
+         <spectrum name="height"   value="350" /> 
+
+         <!-- Roughness of the microfacet model -->
+			<float    name="alpha"    value="0.0001" />
+		</bsdf>
+	</shape>
+
+    <!-- CAMERA PARAMETERS -->	
+	<sensor type="perspective">
+		<transform name="toWorld">
+	<!-- Move and rotate the camera so that looks from (1, 1, 1) to (1, 22, 1)
+		and the direction (0, 0, 1) points "up" in the output image -->
+			<lookat origin="50, 20, 30" target="0, 0, 10" up="0, 0, 1"/>
+			<rotate z="1" angle="110"/>
+			<rotate x="1" angle="-90"/>
+		</transform>
+
+<!-- <sensor type="orthographic">
+		<transform name="toWorld">
+			<lookat target="0, 0, 0" origin="0, 1.5, 0" up="0, 0, 1"/>
+		</transform>
+-->
+		<sampler type="ldsampler">
+			<integer name="sampleCount" value="64"/>
+		</sampler>
+
+		<film type="hdrfilm">
+			<boolean name="banner" value="false"/>
+
+			<integer name="height" value="1080"/>
+			<integer name="width" value="1920"/>
+
+			<string name="pixelFormat" value="rgb"/>
+			<string name="label[50,80]" value="Film Thickness: 350nm | Film IOR: 1.50nm"/>
+
+			<rfilter type="gaussian"/>
+		</film>
+	</sensor>
+
+   <emitter type="constant">
+      <spectrum name="radiance" value="1.0" />
+   </emitter>
+</scene>

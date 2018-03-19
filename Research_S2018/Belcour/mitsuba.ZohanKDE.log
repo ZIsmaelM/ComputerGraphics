@@ -1,0 +1,10 @@
+2018-03-19 06:15:04 INFO  main [mitsuba.cpp:275] Mitsuba version 0.5.0 (Linux, 64 bit), Copyright (c) 2014 Wenzel Jakob
+2018-03-19 06:15:04 INFO  main [mitsuba.cpp:377] Parsing scene description from "killeroo1.xml" ..
+2018-03-19 06:15:04 INFO  main [PluginManager] Loading plugin "plugins/path.so" ..
+2018-03-19 06:15:04 INFO  main [PluginManager] Loading plugin "plugins/diffuse.so" ..
+2018-03-19 06:15:04 INFO  main [PluginManager] Loading plugin "plugins/rectangle.so" ..
+2018-03-19 06:15:04 INFO  main [PluginManager] Loading plugin "plugins/irid.so" ..
+2018-03-19 06:15:04 INFO  main [spectrum.cpp:601] "Cu.eta.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2018-03-19 06:15:04 INFO  main [spectrum.cpp:601] "Cu.k.spd": loaded a spectral power distribution with 55 entries (between 302.400421 and 885.601257 nm)
+2018-03-19 06:15:04 INFO  main [PluginManager] Loading plugin "plugins/obj.so" ..
+2018-03-19 06:15:04 INFO  main [WavefrontOBJ] Loading geometry from "killeroo.obj" ..
