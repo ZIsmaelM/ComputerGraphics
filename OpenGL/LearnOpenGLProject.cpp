@@ -72,7 +72,7 @@ unsigned int initFragmentShader()
 	return fragmentShader;
 }
 
-void shaderProgram(unsigned int vertexShader, unsigned int fragmentShader)
+unsigned int shaderProgram(unsigned int vertexShader, unsigned int fragmentShader)
 {
 	unsigned int shaderProgram;
 	shaderProgram = glCreateProgram();
@@ -89,6 +89,18 @@ void shaderProgram(unsigned int vertexShader, unsigned int fragmentShader)
 		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::PROGRAM::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
+
+	glUseProgram(shaderProgram);
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+
+	return shaderProgram;
+}
+
+void createVAO(unsigned int VBO, float vertices)
+{
+
+
 }
 
 int main() {
@@ -122,7 +134,7 @@ int main() {
 		0.0f, 0.5f, 0.0f
 	};
 
-	// Buffer to store vertices before sending to GPU
+	// VBO: Buffer to store vertices before sending to GPU
 	unsigned int VBO;
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -130,25 +142,32 @@ int main() {
 
 	unsigned int vertexShader = initVertexShader();
 	unsigned int fragmentShader = initFragmentShader();
-	shaderProgram(vertexShader, fragmentShader);
+	unsigned int shader = shaderProgram(vertexShader, fragmentShader);
 
-	int blue = 500;
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	// VAO
+	unsigned int VAO;
+	glGenVertexArrays(1, &VAO);
+
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
 	// render loop
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
 
-		if (blue == 0) {
-			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
-			//blue = 1000000;
-		}
-		else {
-			glClearColor(0.1f, 0.7f, 0.7f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
-			blue -= 1;
-			std::cout << blue << std::endl;
-		}
+		glClearColor(0.1f, 0.7f, 0.7f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		
+		glUseProgram(shader);
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
