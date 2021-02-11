@@ -19,9 +19,11 @@ unsigned int initVertexShader()
 	// Vertex shader
 	const char* vertexShaderSource = "#version 330 core\n"
 		"layout(location = 0) in vec3 aPos;\n"
+		"out vec4 vertexColor;\n"
 		"void main()\n"
 		"{\n"
 		"  gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+		"  vertexColor = vec4(0.5, 0.0, 0.0, 1.0);\n"
 		"}\0";
 
 	unsigned int vertexShader;
@@ -47,10 +49,12 @@ unsigned int initVertexShader()
 unsigned int initFragmentShader()
 {
 	const char* fragmentShaderSource = "#version 330 core\n"
-		"out vec4 FragColor;\n"
+		"in vec4 vertexColor;\n"
+		"out vec4 fragColor;\n"
+		"uniform vec4 ourColor;\n"
 		"void main()\n"
 		"{\n"
-		"  FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+		"  fragColor = ourColor;\n" //vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
 		"}\0";
 
 	unsigned int fragmentShader;
@@ -190,7 +194,7 @@ int main() {
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesC), verticesC, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesA), verticesA, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
@@ -209,9 +213,9 @@ int main() {
 	unsigned int EBO;
 	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesC), indicesC, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesB), indicesB, GL_STATIC_DRAW);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	// render loop
 	while (!glfwWindowShouldClose(window))
@@ -220,16 +224,22 @@ int main() {
 
 		glClearColor(0.1f, 0.7f, 0.7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		/*
+		
 		glUseProgram(shader);
+
+		float timeValue = glfwGetTime();
+		float greenValue = sin(timeValue) / 2.0f + 0.5f;
+		int vertexColorLocation = glGetUniformLocation(shader, "ourColor");
+		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
-		*/
+		/*
 		glUseProgram(shader);
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
-
+		*/
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
