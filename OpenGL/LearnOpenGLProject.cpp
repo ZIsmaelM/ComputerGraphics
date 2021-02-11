@@ -19,11 +19,12 @@ unsigned int initVertexShader()
 	// Vertex shader
 	const char* vertexShaderSource = "#version 330 core\n"
 		"layout(location = 0) in vec3 aPos;\n"
-		"out vec4 vertexColor;\n"
+		"layout(location = 1) in vec3 aColor; \n"
+		"out vec3 vertexColor;\n"
 		"void main()\n"
 		"{\n"
-		"  gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-		"  vertexColor = vec4(0.5, 0.0, 0.0, 1.0);\n"
+		"  gl_Position = vec4(aPos, 1.0);\n"
+		"  vertexColor = aColor;\n"//vec4(0.5, 0.0, 0.0, 1.0);\n"
 		"}\0";
 
 	unsigned int vertexShader;
@@ -49,12 +50,12 @@ unsigned int initVertexShader()
 unsigned int initFragmentShader()
 {
 	const char* fragmentShaderSource = "#version 330 core\n"
-		"in vec4 vertexColor;\n"
+		"in vec3 vertexColor;\n"
 		"out vec4 fragColor;\n"
-		"uniform vec4 ourColor;\n"
+		//"uniform vec4 ourColor;\n"
 		"void main()\n"
 		"{\n"
-		"  fragColor = ourColor;\n" //vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+		"  fragColor = vec4(vertexColor, 1.0);\n" //vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
 		"}\0";
 
 	unsigned int fragmentShader;
@@ -109,6 +110,8 @@ unsigned int createVBO(float* vertices)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	return VBO;
 }
@@ -162,10 +165,12 @@ int main() {
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	float verticesA[] = {
-		-0.5f, -0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		0.0f, 0.5f, 0.0f
+		// positions         // colors
+		 0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
+		-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
+		 0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top 
 	};
+
 	float verticesB[] = {
 		0.5f,  0.5f, 0.0f,  // top right
 		0.5f, -0.5f, 0.0f,  // bottom right
@@ -197,6 +202,8 @@ int main() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesA), verticesA, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	// EBO
 	unsigned int indicesB[] = {  // note that we start from 0!
