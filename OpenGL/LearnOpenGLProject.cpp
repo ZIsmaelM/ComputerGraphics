@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <Shader.h>
 #include <iostream>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -223,7 +224,9 @@ int main() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesB), indicesB, GL_STATIC_DRAW);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+	const char* vsPath = "O:/GraphicsProgramming/LearningOpenGL/LearningOpenGLSolution/LearningOpenGLProject/vertexShader.vs";
+	const char* fsPath = "O:/GraphicsProgramming/LearningOpenGL/LearningOpenGLSolution/LearningOpenGLProject/fragmentShader.fs";
+	Shader ourShader(vsPath, fsPath);
 	// render loop
 	while (!glfwWindowShouldClose(window))
 	{
