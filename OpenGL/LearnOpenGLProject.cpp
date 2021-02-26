@@ -231,17 +231,19 @@ int main() {
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
-
+		
 		glClearColor(0.1f, 0.7f, 0.7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		
-		glUseProgram(shader);
 
+		ourShader.use();
+		ourShader.setFloat("offset", 0.5);
+		//glUseProgram(shader);
+		/*
 		float timeValue = glfwGetTime();
 		float greenValue = sin(timeValue) / 2.0f + 0.5f;
 		int vertexColorLocation = glGetUniformLocation(shader, "ourColor");
 		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-
+		*/
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		/*
