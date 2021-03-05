@@ -5,15 +5,28 @@
 #include <iostream>
 #include "stb_image.h"
 
+#include <algorithm>
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
 }
 
-void processInput(GLFWwindow* window)
+float mix = 0.2f;
+void processInput(GLFWwindow* window, Shader s)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+		mix += 0.01f;
+		mix = std::min(mix, 1.0f);
+		glUniform1f(glGetUniformLocation(s.ID, "mixPercentage"), mix);
+	}
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+		mix -= 0.01f;
+		mix = std::max(mix, 0.0f);
+		glUniform1f(glGetUniformLocation(s.ID, "mixPercentage"), mix);
+	}
 }
 
 int main()
@@ -126,7 +139,7 @@ int main()
 	// render loop
 	while (!glfwWindowShouldClose(window))
 	{
-		processInput(window);
+		processInput(window, ourShader);
 		
 		glClearColor(0.1f, 0.7f, 0.7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
