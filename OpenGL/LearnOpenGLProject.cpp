@@ -16,20 +16,20 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
-float mix = 0.5f;
+float textureMix = 0.5f;
 void processInput(GLFWwindow* window, Shader s)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-		mix += 0.01f;
-		mix = std::min(mix, 1.0f);
-		glUniform1f(glGetUniformLocation(s.ID, "mixPercentage"), mix);
+		textureMix += 0.01f;
+		textureMix = std::min(textureMix, 1.0f);
+		glUniform1f(glGetUniformLocation(s.ID, "mixPercentage"), textureMix);
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		mix -= 0.01f;
-		mix = std::max(mix, 0.0f);
-		glUniform1f(glGetUniformLocation(s.ID, "mixPercentage"), mix);
+		textureMix -= 0.01f;
+		textureMix = std::max(textureMix, 0.0f);
+		glUniform1f(glGetUniformLocation(s.ID, "mixPercentage"), textureMix);
 	}
 }
 
@@ -94,8 +94,8 @@ int main()
 	glEnableVertexAttribArray(1);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	const char* vsPath = "O:/GraphicsProgramming/LearningOpenGL/LearningOpenGLSolution/LearningOpenGLProject/vertexShader.vs";
-	const char* fsPath = "O:/GraphicsProgramming/LearningOpenGL/LearningOpenGLSolution/LearningOpenGLProject/fragmentShader.fs";
+	const char* vsPath = "O:/GraphicsProgramming/LearningOpenGL/LearningOpenGLSolution/LearningOpenGLProject/vertexShader.glsl";
+	const char* fsPath = "O:/GraphicsProgramming/LearningOpenGL/LearningOpenGLSolution/LearningOpenGLProject/fragmentShader.glsl";
 	Shader ourShader(vsPath, fsPath);
 
 	////////////////////////////////////////
@@ -163,20 +163,24 @@ int main()
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
+		glBindVertexArray(VAO);
 		ourShader.use();
-		glUniform1f(glGetUniformLocation(ourShader.ID, "mixPercentage"), mix);
+		glUniform1f(glGetUniformLocation(ourShader.ID, "mixPercentage"), textureMix);
 
+		// draw first box
 		glm::mat4 transform = glm::mat4(1.0f);
 		transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
 		transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-
-		// render container
-		
-
 		unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
 		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
-
-		glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		
+		// draw second box
+		glm::mat4 transform2 = glm::mat4(1.0f);
+		transform2 = glm::translate(transform2, glm::vec3(-0.5f, 0.5f, 0.0f));
+		transform2 = glm::scale(transform2, glm::vec3(abs(sin((float)glfwGetTime())), abs(sin((float)glfwGetTime())), 0.0f));
+		unsigned int transformLoc2 = glGetUniformLocation(ourShader.ID, "transform");
+		glUniformMatrix4fv(transformLoc2, 1, GL_FALSE, glm::value_ptr(transform2));
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
