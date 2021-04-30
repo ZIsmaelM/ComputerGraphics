@@ -109,6 +109,19 @@ int main()
 		1, 2, 3    // second triangle
 	};
 
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
+
 	////////////////////////////////////////
 	// Buffers setup
 	////////////////////////////////////////
@@ -204,11 +217,6 @@ int main()
 		ourShader.use();
 		glUniform1f(glGetUniformLocation(ourShader.ID, "mixPercentage"), textureMix);
 
-		// coordinate system matrices
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-		unsigned int modelMatrixLocation = glGetUniformLocation(ourShader.ID, "model");
-		glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(model));
 		glm::mat4 view = glm::mat4(1.0f);
 		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 		unsigned int viewMatrixLocation = glGetUniformLocation(ourShader.ID, "view");
@@ -217,9 +225,23 @@ int main()
 		projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 		unsigned int projectionMatrixLocation = glGetUniformLocation(ourShader.ID, "projection");
 		glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projection));
+		
+		glm::mat4 model;// = glm::mat4(1.0f);
+		for (glm::vec3 position : cubePositions) {
+			model = glm::translate(glm::mat4(1.0f), position);
+			model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f,0.1f,0.9f));
+			unsigned int modelMatrixLocation = glGetUniformLocation(ourShader.ID, "model");
+			glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(model));
+
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+			
+		}
+		// coordinate system matrices
+		
+		
 
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
