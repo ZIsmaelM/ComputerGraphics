@@ -16,6 +16,14 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
+////////////////////////////////////////
+// Camera Setup
+////////////////////////////////////////
+glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+//--------------------------------------
+
 float textureMix = 0.5f;
 void processInput(GLFWwindow* window, Shader s)
 {
@@ -24,13 +32,22 @@ void processInput(GLFWwindow* window, Shader s)
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
 		textureMix += 0.01f;
 		textureMix = std::min(textureMix, 1.0f);
-		glUniform1f(glGetUniformLocation(s.ID, "mixPercentage"), textureMix);
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
 		textureMix -= 0.01f;
 		textureMix = std::max(textureMix, 0.0f);
-		glUniform1f(glGetUniformLocation(s.ID, "mixPercentage"), textureMix);
 	}
+
+	// camera movement
+	const float cameraSpeed = 0.01f;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		cameraPosition += cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		cameraPosition -= cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		cameraPosition -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		cameraPosition += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 }
 
 int main()
@@ -196,17 +213,6 @@ int main()
 	// Transformation Stuff
 	////////////////////////////////////////
 
-
-	////////////////////////////////////////
-	// Camera Setup
-	////////////////////////////////////////
-	glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
-	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 cameraDirection = glm::normalize(cameraPosition - cameraTarget);
-	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
-	glm::vec3 cameraeUp = glm::cross(cameraDirection, cameraRight);
-
 	////////////////////////////////////////
 	// render loop
 	////////////////////////////////////////
@@ -227,11 +233,8 @@ int main()
 		glUniform1f(glGetUniformLocation(ourShader.ID, "mixPercentage"), textureMix);
 
 		// Lookat matrix
-		const float radius = 10.0f;
-		float camX = sin(glfwGetTime()) * radius;
-		float camZ = cos(glfwGetTime()) * radius;
 		glm::mat4 view;
-		view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+		view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
 		unsigned int viewMatrixLocation = glGetUniformLocation(ourShader.ID, "view");
 		glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(view));
 
