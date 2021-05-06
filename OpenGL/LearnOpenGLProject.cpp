@@ -75,7 +75,7 @@ void scroll_callback(GLFWwindow* window, double xOffset, double yOffset)
 		fov = 90.0f;
 }
 
-void processInput(GLFWwindow* window, Shader s)
+void processInput(GLFWwindow* window, Shader shader, Camera& camera)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
@@ -87,17 +87,19 @@ void processInput(GLFWwindow* window, Shader s)
 		textureMix -= 0.01f;
 		textureMix = std::max(textureMix, 0.0f);
 	}
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+		camera.resetToStartPosition();
+	}
 
 	// camera movement
-	const float cameraSpeed = 2.5f * deltaTime;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		cameraPosition += cameraSpeed * cameraFront;
+		camera.moveVertical(deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		cameraPosition -= cameraSpeed * cameraFront;
+		camera.moveVertical(-deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		cameraPosition -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		camera.moveHorizontal(-deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		cameraPosition += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		camera.moveHorizontal(deltaTime);
 }
 
 void setupBuffers(unsigned int* VBO, unsigned int* VAO, unsigned int* EBO)
@@ -224,9 +226,9 @@ void updateModelMatrix(glm::mat4 model, Shader shader)
 	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(model));
 }
 
-void updateViewMatrix(glm::mat4& view, Shader shader)
+void updateViewMatrix(glm::mat4& view, Shader shader, Camera& camera)
 {
-	view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
+	view = camera.getView();
 	unsigned int viewMatrixLocation = glGetUniformLocation(shader.ID, "view");
 	glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(view));
 }
@@ -288,7 +290,7 @@ int main()
 	const char* fsPath = "O:/GraphicsProgramming/LearningOpenGL/LearningOpenGLSolution/LearningOpenGLProject/fragmentShader.glsl";
 	Shader ourShader(vsPath, fsPath);
 
-	Camera ourCamera();
+	Camera ourCamera = Camera();
 
 	unsigned int texture1, texture2;
 	setupTextures(&texture1, &texture2);
@@ -304,14 +306,14 @@ int main()
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		processInput(window, ourShader);
+		processInput(window, ourShader, ourCamera);
 		
 		glClearColor(0.1f, 0.7f, 0.7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUniform1f(glGetUniformLocation(ourShader.ID, "mixPercentage"), textureMix);
 
 		glm::mat4 view = glm::mat4(1.0f);
-		updateViewMatrix(view, ourShader);
+		updateViewMatrix(view, ourShader, ourCamera);
 
 		glm::mat4 projection = glm::mat4(1.0f);
 		updateProjectionMatrix(projection, ourShader);
