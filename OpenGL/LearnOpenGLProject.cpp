@@ -15,18 +15,15 @@
 ////////////////////////////////////////
 // Globals
 ////////////////////////////////////////
-glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 float textureMix = 0.5f;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-float yaw = -90.0f;
-float pitch = 0.0f;
-float lastX = 400;
-float lastY = 300;
-float fov = 45.0f;
-bool firstMouse = true;
+int SCREEN_WIDTH = 800;
+int SCREEN_HEIGHT = 600;
+float ASPECT_RATIO = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
+float NEAR_PLANE = 0.1f;
+float FAR_PLANE = 100.0f;
+Camera camera = Camera();
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -36,46 +33,15 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void mouse_callback(GLFWwindow* window, double xPosition, double yPosition)
 {
-	if (firstMouse) {
-		lastX = xPosition;
-		lastY = yPosition;
-		firstMouse = false;
-	}
-
-	float xOffset = xPosition - lastX;
-	float yOffset = -(yPosition - lastY);
-	lastX = xPosition;
-	lastY = yPosition;
-
-	float sensitivity = 0.1f;
-	xOffset *= sensitivity;
-	yOffset *= sensitivity;
-
-	yaw += xOffset;
-	pitch += yOffset;
-
-	if (pitch > 89.0f)
-		pitch = 89.0f;
-	if (pitch < -89.0f)
-		pitch = -89.0f;
-
-	glm::vec3 direction;
-	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	direction.y = sin(glm::radians(pitch));
-	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cameraFront = glm::normalize(direction);
+	camera.updateView(xPosition, yPosition);
 }
 
 void scroll_callback(GLFWwindow* window, double xOffset, double yOffset)
 {
-	fov -= (float)yOffset;
-	if (fov < 1.0f)
-		fov = 1.0f;
-	if (fov > 90.0f)
-		fov = 90.0f;
+	camera.updateZoom(yOffset);
 }
 
-void processInput(GLFWwindow* window, Shader shader, Camera& camera)
+void processInput(GLFWwindow* window, Shader shader)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
@@ -93,13 +59,13 @@ void processInput(GLFWwindow* window, Shader shader, Camera& camera)
 
 	// camera movement
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.moveVertical(deltaTime);
+		camera.move(FORWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.moveVertical(-deltaTime);
+		camera.move(BACKWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.moveHorizontal(-deltaTime);
+		camera.move(LEFT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.moveHorizontal(deltaTime);
+		camera.move(RIGHT, deltaTime);
 }
 
 void setupBuffers(unsigned int* VBO, unsigned int* VAO, unsigned int* EBO)
@@ -235,7 +201,7 @@ void updateViewMatrix(glm::mat4& view, Shader shader, Camera& camera)
 
 void updateProjectionMatrix(glm::mat4 projection, Shader shader)
 {
-	projection = glm::perspective(glm::radians(fov), 800.0f / 600.0f, 0.1f, 100.0f);
+	projection = glm::perspective(camera.getZoom(), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
 	unsigned int projectionMatrixLocation = glGetUniformLocation(shader.ID, "projection");
 	glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projection));
 }
@@ -247,7 +213,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "LearnOpenGL", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -262,7 +228,7 @@ int main()
 		return -1;
 	}
 
-	glViewport(0, 0, 800, 600);
+	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	glEnable(GL_DEPTH_TEST);
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -290,8 +256,6 @@ int main()
 	const char* fsPath = "O:/GraphicsProgramming/LearningOpenGL/LearningOpenGLSolution/LearningOpenGLProject/fragmentShader.glsl";
 	Shader ourShader(vsPath, fsPath);
 
-	Camera ourCamera = Camera();
-
 	unsigned int texture1, texture2;
 	setupTextures(&texture1, &texture2);
 	ourShader.use();
@@ -306,14 +270,14 @@ int main()
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		processInput(window, ourShader, ourCamera);
+		processInput(window, ourShader);
 		
 		glClearColor(0.1f, 0.7f, 0.7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUniform1f(glGetUniformLocation(ourShader.ID, "mixPercentage"), textureMix);
 
 		glm::mat4 view = glm::mat4(1.0f);
-		updateViewMatrix(view, ourShader, ourCamera);
+		updateViewMatrix(view, ourShader, camera);
 
 		glm::mat4 projection = glm::mat4(1.0f);
 		updateProjectionMatrix(projection, ourShader);
