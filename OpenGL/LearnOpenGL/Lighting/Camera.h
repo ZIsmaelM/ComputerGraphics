@@ -51,7 +51,7 @@ public:
 				position += glm::normalize(glm::cross(front, up)) * moveSpeed * deltaTime;
 				break;
 		}
-		position.y = 0.0f; // for XZ plane movement only
+		//position.y = 0.0f; // for XZ plane movement only
 	}
 
 	void moveHorizontal(const float deltaTime)
