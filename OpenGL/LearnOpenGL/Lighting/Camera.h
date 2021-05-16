@@ -108,6 +108,11 @@ public:
 	{
 		return glm::radians(fieldOfView);
 	}
+	
+	glm::vec3 getPosition()
+	{
+		return position;
+	}
 
 	void resetToStartPosition()
 	{

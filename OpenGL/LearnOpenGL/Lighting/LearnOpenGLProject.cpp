@@ -26,7 +26,6 @@ float FAR_PLANE = 100.0f;
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f); 
 Camera camera = Camera();
 
-
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
@@ -253,9 +252,13 @@ int main()
 		lastFrame = currentFrame;
 		processInput(window);
 		
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
+		//lightPos = glm::vec3(sin(glfwGetTime())+1.0f, 0.0f, cos(glfwGetTime()) / 2.0f);
+		lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
+		lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
+
 		objectShader.use();
 		glm::mat4 view = glm::mat4(1.0f);
 		updateViewMatrix(view, objectShader);
@@ -267,6 +270,7 @@ int main()
 		objectShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
 		objectShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 		objectShader.setVec3("lightPos", lightPos);
+		objectShader.setVec3("viewPos", camera.getPosition());
 		objectShader.setMat4("model", model);
 		objectShader.setMat4("view", view);
 		objectShader.setMat4("projection", projection);
