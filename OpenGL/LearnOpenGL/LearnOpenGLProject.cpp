@@ -253,9 +253,9 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		//lightPos = glm::vec3(sin(glfwGetTime())+1.0f, 0.0f, cos(glfwGetTime()) / 2.0f);
-		lightPos.x = 2.0f * sin(glfwGetTime()); // 1.0f + sin(glfwGetTime()) * 2.0f;
-		lightPos.y = -0.3f;
-		lightPos.z = 1.5f * cos(glfwGetTime()); // sin(glfwGetTime() / 2.0f) * 1.0f;
+		lightPos.x = 2.0f * sin(glfwGetTime()/100); // 1.0f + sin(glfwGetTime()) * 2.0f;
+		lightPos.y = 0.45f;
+		lightPos.z = 1.5f * cos(glfwGetTime()/100); // sin(glfwGetTime() / 2.0f) * 1.0f;
 
 		objectShader.use();
 		glm::mat4 view = glm::mat4(1.0f);
@@ -267,8 +267,19 @@ int main()
 		glm::mat4 model = glm::mat4(1.0f);
 		updateModelMatrix(model, objectShader);
 
-		objectShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-		objectShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		objectShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+		objectShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+		objectShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+		objectShader.setFloat("material.shininess", 32.0f);
+		glm::vec3 lightColor;
+		lightColor.x = sin(glfwGetTime() * 2.0f);
+		lightColor.y = sin(glfwGetTime() * 0.7f);
+		lightColor.z = sin(glfwGetTime() * 1.3f);
+		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+		objectShader.setVec3("light.ambient", ambientColor);
+		objectShader.setVec3("light.diffuse", diffuseColor);
+		objectShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 		objectShader.setVec3("lightPos", lightPos);
 		objectShader.setVec3("viewPos", camera.getPosition());
 		objectShader.setMat4("model", model);
@@ -290,6 +301,7 @@ int main()
 		lightShader.setMat4("model", model);
 		lightShader.setMat4("view", view);
 		lightShader.setMat4("projection", projection);
+		lightShader.setVec3("lampColor", lightColor);
 		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		
