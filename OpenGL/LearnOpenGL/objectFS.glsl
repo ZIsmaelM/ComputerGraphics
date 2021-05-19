@@ -1,11 +1,11 @@
 #version 330 core
 struct Material {
-    vec3 ambient;
-    vec3 diffuse;
+    sampler2D diffuse;
     vec3 specular;
     float shininess;
 };
 uniform Material material;
+in vec2 TexCoords;
 
 struct Light {
     vec3 position;
@@ -24,13 +24,13 @@ out vec4 FragColor;
 void main()
 {
     // ambient light
-    vec3 ambient = light.ambient * material.ambient;
+    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
 
     // diffues light
     vec3 lightDir = normalize(LightPos - FragPos);
     vec3 norm = normalize(Normal);
-    float diffuseStrength = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = light.diffuse * (diffuseStrength * material.diffuse);
+    float diff = max(dot(norm, lightDir), 0.0);
+    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
 
     // specular light
     vec3 viewDir = normalize(-FragPos); // the viewer is always at (0,0,0) in view-space, so viewDir is (0,0,0) - Position => -Position
