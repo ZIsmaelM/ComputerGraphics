@@ -136,12 +136,12 @@ void setupBuffers(unsigned int* VBO, unsigned int* objectVAO, unsigned int* EBO,
 	glEnableVertexAttribArray(0);
 }
 
-void setupTextures(unsigned int* textureID)
+void setupTextures(unsigned int* textureID, const char* path)
 {
 	glGenTextures(1, textureID);
 	int width, height, nrComponents;
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = stbi_load("textures/crate.png", &width, &height, &nrComponents, 0);
+	unsigned char* data = stbi_load(path, &width, &height, &nrComponents, 0);
 	if (data) {
 		GLenum format;
 		if (nrComponents == 1)
@@ -164,10 +164,6 @@ void setupTextures(unsigned int* textureID)
 		std::cout << "Failed to load texture" << std::endl;
 	}
 	stbi_image_free(data);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, *textureID);
-
 }
 
 void updateModelMatrix(glm::mat4 model, Shader shader)
@@ -232,7 +228,15 @@ int main()
 	Shader lightShader(lightVSPath, lightFSPath);
 
 	unsigned int crateTexture;
-	setupTextures(&crateTexture);
+	const char* crateTextPath = "textures/crate.png";
+	setupTextures(&crateTexture, crateTextPath);
+	unsigned int crateSpectral;
+	const char* crateSpecPath = "textures/crate_specular.png";
+	setupTextures(&crateSpectral, crateSpecPath);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, crateTexture);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, crateSpectral);
 	////////////////////////////////////////
 	// render loop
 	////////////////////////////////////////
@@ -246,10 +250,11 @@ int main()
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		//lightPos = glm::vec3(sin(glfwGetTime())+1.0f, 0.0f, cos(glfwGetTime()) / 2.0f);
+		/*
 		lightPos.x = 2.0f * sin(glfwGetTime()/100); // 1.0f + sin(glfwGetTime()) * 2.0f;
 		lightPos.y = 0.45f;
 		lightPos.z = 1.5f * cos(glfwGetTime()/100); // sin(glfwGetTime() / 2.0f) * 1.0f;
+		*/
 
 		objectShader.use();
 		glm::mat4 view = glm::mat4(1.0f);
@@ -261,17 +266,14 @@ int main()
 		glm::mat4 model = glm::mat4(1.0f);
 		updateModelMatrix(model, objectShader);
 
-		objectShader.setInt("material.diffuse", 0);
-		objectShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-		objectShader.setFloat("material.shininess", 32.0f);
-		glm::vec3 lightColor = glm::vec3(1.0f);
-		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
-		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
-		objectShader.setVec3("light.ambient", ambientColor);
-		objectShader.setVec3("light.diffuse", diffuseColor);
-		objectShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-		objectShader.setVec3("lightPos", lightPos);
+		objectShader.setVec3("light.position", lightPos);
 		objectShader.setVec3("viewPos", camera.getPosition());
+		objectShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+		objectShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+		objectShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+		objectShader.setInt("material.diffuse", 0);
+		objectShader.setInt("material.specular", 1);
+		objectShader.setFloat("material.shininess", 64.0f);
 		objectShader.setMat4("model", model);
 		objectShader.setMat4("view", view);
 		objectShader.setMat4("projection", projection);
@@ -291,7 +293,7 @@ int main()
 		lightShader.setMat4("model", model);
 		lightShader.setMat4("view", view);
 		lightShader.setMat4("projection", projection);
-		lightShader.setVec3("lampColor", lightColor);
+		lightShader.setVec3("lampColor", 1.0f, 1.0f, 1.0f);
 		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		
