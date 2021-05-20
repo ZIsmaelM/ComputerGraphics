@@ -281,18 +281,24 @@ int main()
 		glm::mat4 projection = glm::mat4(1.0f);
 		projection = glm::perspective(camera.getZoom(), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
 		updateProjectionMatrix(projection, objectShader);		
-		//glm::mat4 model = glm::mat4(1.0f);
-		//updateModelMatrix(model, objectShader);
+		glm::mat4 model = glm::mat4(1.0f);
+		updateModelMatrix(model, objectShader);
 
-		objectShader.setVec3("light.direction", -0.2f, -1.0f, -0.3f);
+		objectShader.setVec3("lightPos", lightPos);
 		objectShader.setVec3("viewPos", camera.getPosition());
-		objectShader.setVec3("light.ambient", 0.8f, 0.8f, 0.8f);
+
+		objectShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
 		objectShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
 		objectShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+		objectShader.setFloat("light.constant", 1.0f);
+		objectShader.setFloat("light.linear", 0.09f);
+		objectShader.setFloat("light.quadratic", 0.032f);
+		
 		objectShader.setInt("material.diffuse", 0);
 		objectShader.setInt("material.specular", 1);
 		objectShader.setInt("material.emission", 2);
-		objectShader.setFloat("material.shininess", 64.0f);
+		objectShader.setFloat("material.shininess", 32.0f);
+		
 		//objectShader.setMat4("model", model);
 		objectShader.setMat4("view", view);
 		objectShader.setMat4("projection", projection);
@@ -309,24 +315,18 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		/*
 		lightShader.use();
-		view = glm::mat4(1.0f);
-		view = camera.getView();
-		updateViewMatrix(view, lightShader);     
-		projection = glm::mat4(1.0f);
-		projection = glm::perspective(camera.getZoom(), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
-		updateProjectionMatrix(projection, lightShader);
+		lightShader.setMat4("view", view);
+		lightShader.setMat4("projection", projection);
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, lightPos);
 		model = glm::scale(model, glm::vec3(0.2f));
 		lightShader.setMat4("model", model);
-		lightShader.setMat4("view", view);
-		lightShader.setMat4("projection", projection);
+		
 		lightShader.setVec3("lampColor", 1.0f, 1.0f, 1.0f);
 		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-		*/
+		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
