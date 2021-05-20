@@ -233,10 +233,15 @@ int main()
 	unsigned int crateSpectral;
 	const char* crateSpecPath = "textures/crate_specular.png";
 	setupTextures(&crateSpectral, crateSpecPath);
+	unsigned int crateEmission;
+	const char* crateEmitPath = "textures/crate_emission.jpg";
+	setupTextures(&crateEmission, crateEmitPath);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, crateTexture);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, crateSpectral);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, crateEmission);
 	////////////////////////////////////////
 	// render loop
 	////////////////////////////////////////
@@ -268,11 +273,12 @@ int main()
 
 		objectShader.setVec3("light.position", lightPos);
 		objectShader.setVec3("viewPos", camera.getPosition());
-		objectShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+		objectShader.setVec3("light.ambient", 0.8f, 0.8f, 0.8f);
 		objectShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
 		objectShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 		objectShader.setInt("material.diffuse", 0);
 		objectShader.setInt("material.specular", 1);
+		objectShader.setInt("material.emission", 2);
 		objectShader.setFloat("material.shininess", 64.0f);
 		objectShader.setMat4("model", model);
 		objectShader.setMat4("view", view);
