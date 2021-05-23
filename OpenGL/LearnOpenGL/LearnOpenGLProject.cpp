@@ -284,15 +284,18 @@ int main()
 		glm::mat4 model = glm::mat4(1.0f);
 		updateModelMatrix(model, objectShader);
 
-		objectShader.setVec3("lightPos", lightPos);
+		objectShader.setVec3("lightPos", camera.getPosition());
 		objectShader.setVec3("viewPos", camera.getPosition());
 
 		objectShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
 		objectShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
 		objectShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+		objectShader.setVec3("light.direction", camera.getFront());
 		objectShader.setFloat("light.constant", 1.0f);
 		objectShader.setFloat("light.linear", 0.09f);
 		objectShader.setFloat("light.quadratic", 0.032f);
+		objectShader.setFloat("light.cutoff", glm::cos(glm::radians(12.5f)));
+		objectShader.setFloat("light.outerCutoff", glm::cos(glm::radians(17.5f)));
 		
 		objectShader.setInt("material.diffuse", 0);
 		objectShader.setInt("material.specular", 1);
