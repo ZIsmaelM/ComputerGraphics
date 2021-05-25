@@ -99,6 +99,10 @@ struct SpotLight {
     vec3 diffuse;
     vec3 specular;
 
+    float constant;
+    float linear;
+    float quadratic;
+
     float cutoff;
     float outerCutoff;
 };
@@ -106,12 +110,15 @@ uniform SpotLight spotLight;
 
 vec3 getSpotLightContribution(SpotLight light, vec3 normal, vec3 viewDir)
 {
-    vec3 lightDir = normalize(light.position - FragPos);
+    vec3 lightDir = normalize(LightPos - FragPos);
     // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+
+    float distance = length(LightPos - FragPos);
+    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
     float theta = dot(lightDir, normalize(-light.direction));
     float epsilon = light.cutoff - light.outerCutoff;
@@ -120,9 +127,9 @@ vec3 getSpotLightContribution(SpotLight light, vec3 normal, vec3 viewDir)
     vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
     vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
     vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
-    //ambient *= intensity;
-    diffuse *= intensity;
-    specular *= intensity;
+    ambient  *= attenuation * intensity;
+    diffuse  *= attenuation * intensity;
+    specular *= attenuation * intensity;
 
     return ambient + diffuse + specular;
 }
@@ -137,7 +144,7 @@ void main()
     //for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
     //    result += getPointLightContribution(pointLights[i], norm, FragPos, viewDir);
     //}
-    //result += getSpotLightContribution(spotLight, norm, viewDir);
+    result += getSpotLightContribution(spotLight, norm, viewDir);
 
     //vec3 result = ambient + diffuse + specular + emission;
     FragColor = vec4(result, 1.0);

@@ -191,6 +191,7 @@ void setupMaterials(Shader shader)
 	shader.setInt("material.emission", 2);
 	shader.setFloat("material.shininess", 32.0f);
 }
+
 void setupDirectionalLight(Shader shader)
 {
 	shader.setVec3("ViewPos", camera.getPosition());
@@ -220,14 +221,18 @@ void setupSpotLight(Shader shader)
 {
 	shader.setVec3("lightPos", camera.getPosition());
 	shader.setVec3("ViewPos", camera.getPosition());
+	shader.setVec3("spotLight.direction", camera.getFront());
+
+	shader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+	shader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+	shader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
 	
-	shader.setVec3("directionalLight.ambient", 0.2f, 0.2f, 0.2f);
-	shader.setVec3("directionalLight.diffuse", 0.5f, 0.5f, 0.5f);
-	shader.setVec3("directionalLight.specular", 1.0f, 1.0f, 1.0f);
-	shader.setVec3("directionalLight.direction", camera.getPosition());
-	
-	shader.setFloat("directionalLight.cutoff", glm::cos(glm::radians(12.5f)));
-	shader.setFloat("directionalLight.outerCutoff", glm::cos(glm::radians(17.5f)));
+	shader.setFloat("spotLight.constant", 1.0f);
+	shader.setFloat("spotLight.linear", 0.09f);
+	shader.setFloat("spotLight.quadratic", 0.032f);
+
+	shader.setFloat("spotLight.cutoff", glm::cos(glm::radians(12.5f)));
+	shader.setFloat("spotLight.outerCutoff", glm::cos(glm::radians(15.0f)));
 }
 
 int main()
@@ -334,7 +339,7 @@ int main()
 		setupMaterials(objectShader);
 		setupDirectionalLight(objectShader);
 		//setupPointLight(objectShader);
-		//setupSpotLight(objectShader);
+		setupSpotLight(objectShader);
 
 		//objectShader.setMat4("model", model);
 		objectShader.setMat4("view", view);
