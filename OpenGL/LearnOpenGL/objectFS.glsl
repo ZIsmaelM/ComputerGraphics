@@ -108,16 +108,16 @@ struct SpotLight {
 };
 uniform SpotLight spotLight;
 
-vec3 getSpotLightContribution(SpotLight light, vec3 normal, vec3 viewDir)
+vec3 getSpotLightContribution(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
-    vec3 lightDir = normalize(LightPos - FragPos);
+    vec3 lightDir = normalize(light.position - fragPos);
     // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
-    float distance = length(LightPos - FragPos);
+    float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
     float theta = dot(lightDir, normalize(-light.direction));
@@ -140,11 +140,11 @@ void main()
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(ViewPos - FragPos);
 
-    vec3 result = getDirectionalLightContribution(directionalLight, norm, viewDir);
-    //for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
-    //    result += getPointLightContribution(pointLights[i], norm, FragPos, viewDir);
-    //}
-    result += getSpotLightContribution(spotLight, norm, viewDir);
+    vec3 result = vec3(0.0); //getDirectionalLightContribution(directionalLight, norm, viewDir);
+    for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
+        result += getPointLightContribution(pointLights[i], norm, FragPos, viewDir);
+    }
+    //result += getSpotLightContribution(spotLight, norm, FragPos, viewDir);
 
     //vec3 result = ambient + diffuse + specular + emission;
     FragColor = vec4(result, 1.0);
