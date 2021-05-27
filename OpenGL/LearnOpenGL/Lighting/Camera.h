@@ -114,6 +114,11 @@ public:
 		return position;
 	}
 
+	glm::vec3 getFront()
+	{
+		return front;
+	}
+
 	void resetToStartPosition()
 	{
 		position = glm::vec3(0.0f, 0.0f, 3.0f);
@@ -126,9 +131,7 @@ public:
 
 	glm::mat4 getView()
 	{
-		glm::mat4 foo = glm::mat4(1.0f);
-		foo = glm::lookAt(position, position + front, up);
-		return foo;
+		return glm::lookAt(position, position + front, up);
 	}
 };
 #endif
