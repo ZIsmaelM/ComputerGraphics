@@ -194,9 +194,9 @@ void setupMaterials(Shader shader)
 
 void setupDirectionalLight(Shader shader)
 {	
-	shader.setVec3("directionalLight.ambient", 0.1f, 0.1f, 0.1f);
-	shader.setVec3("directionalLight.diffuse", 0.5f, 0.5f, 0.5f);
-	shader.setVec3("directionalLight.specular", 1.0f, 1.0f, 1.0f);
+	shader.setVec3("directionalLight.ambient", 0.05f, 0.05f, 0.05f);
+	shader.setVec3("directionalLight.diffuse", 0.4f, 0.4f, 0.4f);
+	shader.setVec3("directionalLight.specular", 0.5f, 0.5f, 0.5f);
 	shader.setVec3("directionalLight.direction", -0.2f, -1.0f, -0.3f);
 }
 
@@ -326,18 +326,12 @@ int main()
 	unsigned int crateTexture;
 	const char* crateTextPath = "textures/crate.png";
 	setupTextures(&crateTexture, crateTextPath);
-	unsigned int crateSpectral;
+	unsigned int crateSpecular;
 	const char* crateSpecPath = "textures/crate_specular.png";
-	setupTextures(&crateSpectral, crateSpecPath);
+	setupTextures(&crateSpecular, crateSpecPath);
 	unsigned int crateEmission;
 	const char* crateEmitPath = "textures/crate_emission.jpg";
 	setupTextures(&crateEmission, crateEmitPath);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, crateTexture);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, crateSpectral);
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, crateEmission);
 	////////////////////////////////////////
 	// render loop
 	////////////////////////////////////////
@@ -348,7 +342,7 @@ int main()
 		lastFrame = currentFrame;
 		processInput(window);
 		
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		objectShader.use();
@@ -369,6 +363,15 @@ int main()
 
 		objectShader.setMat4("view", view);
 		objectShader.setMat4("projection", projection);
+		objectShader.setMat4("model", model);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, crateTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, crateSpecular);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, crateEmission);
+
 		glBindVertexArray(objectVAO);
 		for (unsigned int i = 0; i < 10; i++)
 		{

@@ -1,4 +1,13 @@
 #version 330 core
+
+in vec3 Normal;
+in vec3 FragPos;
+in vec3 LightPos;
+
+out vec4 FragColor;
+
+uniform vec3 ViewPos;
+
 struct Material {
     sampler2D diffuse;
     sampler2D specular;
@@ -8,30 +17,9 @@ struct Material {
 uniform Material material;
 in vec2 TexCoords;
 
-struct Light {
-    vec3 position;
-    vec3 direction;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-
-    float constant;
-    float linear;
-    float quadratic;
-    float cutoff;
-    float outerCutoff;
-};
-uniform Light light;
-
-in vec3 Normal;
-in vec3 FragPos;
-in vec3 LightPos;
-in vec3 ViewPos;
-
-out vec4 FragColor;
-
 struct DirectionalLight {
     vec3 direction;
+
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -140,11 +128,11 @@ void main()
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(ViewPos - FragPos);
 
-    vec3 result = vec3(0.0); //getDirectionalLightContribution(directionalLight, norm, viewDir);
+    vec3 result = getDirectionalLightContribution(directionalLight, norm, viewDir);
     for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
         result += getPointLightContribution(pointLights[i], norm, FragPos, viewDir);
     }
-    //result += getSpotLightContribution(spotLight, norm, FragPos, viewDir);
+    result += getSpotLightContribution(spotLight, norm, FragPos, viewDir);
 
     //vec3 result = ambient + diffuse + specular + emission;
     FragColor = vec4(result, 1.0);
