@@ -166,24 +166,6 @@ void setupTextures(unsigned int* textureID, const char* path)
 	stbi_image_free(data);
 }
 
-void updateModelMatrix(glm::mat4 model, Shader shader)
-{
-	unsigned int modelMatrixLocation = glGetUniformLocation(shader.ID, "model");
-	glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(model));
-}
-
-void updateViewMatrix(glm::mat4& view, Shader shader)
-{
-	unsigned int viewMatrixLocation = glGetUniformLocation(shader.ID, "view");
-	glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, glm::value_ptr(view));
-}
-
-void updateProjectionMatrix(glm::mat4& projection, Shader shader)
-{
-	unsigned int projectionMatrixLocation = glGetUniformLocation(shader.ID, "projection");
-	glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projection));
-}
-
 void setupMaterials(Shader shader)
 {
 	shader.setInt("material.diffuse", 0);
@@ -348,22 +330,18 @@ int main()
 		objectShader.use();
 		glm::mat4 view = glm::mat4(1.0f);
 		view = camera.getView();
-		updateViewMatrix(view, objectShader);
+		objectShader.setMat4("view", view);
 		glm::mat4 projection = glm::mat4(1.0f);
 		projection = glm::perspective(camera.getZoom(), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
-		updateProjectionMatrix(projection, objectShader);		
+		objectShader.setMat4("projection", projection);
 		glm::mat4 model = glm::mat4(1.0f);
-		updateModelMatrix(model, objectShader);
+		objectShader.setMat4("model", model);
 
 		objectShader.setVec3("ViewPos", camera.getPosition());
 		setupMaterials(objectShader);
 		setupDirectionalLight(objectShader);
 		setupPointLight(objectShader, pointLightPositions);
 		setupSpotLight(objectShader);
-
-		objectShader.setMat4("view", view);
-		objectShader.setMat4("projection", projection);
-		objectShader.setMat4("model", model);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, crateTexture);
