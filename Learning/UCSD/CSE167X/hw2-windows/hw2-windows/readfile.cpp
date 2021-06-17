@@ -103,7 +103,19 @@ void readfile(const char* filename)
                             // YOUR CODE FOR HW 2 HERE. 
                             // Note that values[0...7] shows the read in values 
                             // Make use of lightposn[] and lightcolor[] arrays in variables.h
-                            // Those arrays can then be used in display too.  
+                            // Those arrays can then be used in display too.
+                            for (i = 0; i < 8; i++) {
+                                lightposn[i * 4 + 0] = values[0];
+                                lightposn[i * 4 + 1] = values[1];
+                                lightposn[i * 4 + 2] = values[2];
+                                // should be treated as directional light if w = 0 else point light
+                                lightposn[i * 4 + 3] = values[3];
+
+                                lightcolor[i * 4 + 0] = values[4];
+                                lightcolor[i * 4 + 1] = values[5];
+                                lightcolor[i * 4 + 2] = values[6];
+                                lightcolor[i * 4 + 3] = 1; // setting alpha to 1
+                            }
 
                             ++numused; 
                         }
@@ -162,8 +174,24 @@ void readfile(const char* filename)
                         // Use all of values[0...9]
                         // You may need to use the upvector fn in Transform.cpp
                         // to set up correctly. 
-                        // Set eyeinit upinit center fovy in variables.h 
+                        // Set eyeinit upinit center fovy in variables.h
+                        eyeinit.x = values[0];
+                        eyeinit.y = values[1];
+                        eyeinit.z = values[2];
 
+                        center.x = values[3];
+                        center.y = values[4];
+                        center.z = values[5];
+
+                        upinit.x = values[6];
+                        upinit.y = values[7];
+                        upinit.z = values[8];
+                        vec3 normalizedUp = Transform::upvector(upinit, eyeinit - center);
+                        upinit.x = normalizedUp.x;
+                        upinit.y = normalizedUp.y;
+                        upinit.z = normalizedUp.z;
+
+                        fovy = values[9];
                     }
                 }
 
