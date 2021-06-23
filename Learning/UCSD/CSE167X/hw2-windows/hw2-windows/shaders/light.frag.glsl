@@ -41,6 +41,10 @@ void main (void)
 
         // YOUR CODE FOR HW 2 HERE
         // A key part is implementation of the fragment shader
+        vec4 lightIntensity = ambient + emission;
+        vec4 diffuseComponent;
+        for(int i = 0; i < numused; i++) {
+        }
 
         // Color all pixels black for now, remove this in your implementation!
         finalcolor = vec4(0.0f, 0.0f, 0.0f, 1.0f); 

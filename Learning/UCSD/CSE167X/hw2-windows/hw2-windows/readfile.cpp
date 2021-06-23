@@ -241,6 +241,7 @@ void readfile(const char* filename)
                         // You might want to use helper functions on top of file. 
                         // Also keep in mind what order your matrix is!
 
+
                     }
                 }
                 else if (cmd == "scale") {
