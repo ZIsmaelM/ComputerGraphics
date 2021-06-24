@@ -176,7 +176,7 @@ void readfile(const char* filename)
                         // You may need to use the upvector fn in Transform.cpp
                         // to set up correctly. 
                         // Set eyeinit upinit center fovy in variables.h
-                        /*eyeinit.x = values[0];
+                        eyeinit.x = values[0];
                         eyeinit.y = values[1];
                         eyeinit.z = values[2];
 
@@ -192,7 +192,7 @@ void readfile(const char* filename)
                         upinit.y = normalizedUp.y;
                         upinit.z = normalizedUp.z;
 
-                        fovy = values[9];*/
+                        fovy = values[9];
                     }
                 }
 
@@ -253,7 +253,7 @@ void readfile(const char* filename)
                         // Think about how the transformation stack is affected
                         // You might want to use helper functions on top of file.  
                         // Also keep in mind what order your matrix is!
-                        mat4 scaleMatrix = Transform::translate(values[0], values[1], values[2]);
+                        mat4 scaleMatrix = Transform::scale(values[0], values[1], values[2]);
                         rightmultiply(scaleMatrix, transfstack);
                     }
                 }

@@ -122,7 +122,7 @@ mat4 Transform::translate(const float &tx, const float &ty, const float &tz)
     vec4 colB = vec4(0, 1, 0, 0);
     vec4 colC = vec4(0, 0, 1, 0);
     vec4 colD = vec4(tx, ty, tz, 1);
-    mat4 translationMatrix = mat4(colA, colB, colC, colD);
+    mat4 translationMatrix = mat4(colA, colB, colC, glm::normalize(colD));
 
     return translationMatrix;
 }

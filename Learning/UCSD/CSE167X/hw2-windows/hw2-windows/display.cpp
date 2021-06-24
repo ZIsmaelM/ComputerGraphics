@@ -43,8 +43,9 @@ void transformvec (const GLfloat input[4], GLfloat output[4])
 
 void display() 
 {
-  glClearColor(0.5, 0.5, 0.5, 0);
+  glClearColor(0.0, 0.0, 1.0, 0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   // Set up the camera view
 
@@ -114,17 +115,14 @@ void display()
     // Set up the object transformations 
     // And pass in the appropriate material properties
     // Again glUniform() related functions will be useful
-    modelview = modelview * obj->transform;
-    glUniform4fv(modelviewPos, 1, &modelview[0][0]);
-    glUniform4f(glGetUniformLocation(fragmentshader, "ambient"),
-        obj->ambient[0], obj->ambient[1], obj->ambient[2], obj->ambient[3]);
-    glUniform4f(glGetUniformLocation(fragmentshader, "diffuse"),
-        obj->diffuse[0], obj->diffuse[1], obj->diffuse[2], obj->diffuse[3]);
-    glUniform4f(glGetUniformLocation(fragmentshader, "specular"),
-        obj->specular[0], obj->specular[1], obj->specular[2], obj->specular[3]);
-    glUniform4f(glGetUniformLocation(fragmentshader, "emission"),
-        obj->emission[0], obj->emission[1], obj->emission[2], obj->emission[3]);
-    glUniform1f(glGetUniformLocation(fragmentshader, "shininess"), obj->shininess);
+
+    modelview = transf * obj->transform;
+    //glUniform4fv(modelviewPos, 1, &transformedModel[0][0]);
+    glUniform4f(ambientcol, obj->ambient[0], obj->ambient[1], obj->ambient[2], obj->ambient[3]);
+    glUniform4f(diffusecol, obj->diffuse[0], obj->diffuse[1], obj->diffuse[2], obj->diffuse[3]);
+    glUniform4f(specularcol, obj->specular[0], obj->specular[1], obj->specular[2], obj->specular[3]);
+    glUniform4f(emissioncol, obj->emission[0], obj->emission[1], obj->emission[2], obj->emission[3]);
+    glUniform1f(shininesscol, obj->shininess);
 
 
     // Actually draw the object

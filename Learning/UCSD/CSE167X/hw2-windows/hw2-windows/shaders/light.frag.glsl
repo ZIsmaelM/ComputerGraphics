@@ -41,13 +41,22 @@ void main (void)
 
         // YOUR CODE FOR HW 2 HERE
         // A key part is implementation of the fragment shader
-        vec4 lightIntensity = ambient + emission;
-        vec4 diffuseComponent;
-        for(int i = 0; i < numused; i++) {
-        }
+        vec4 ambientComponent = ambient + emission;
+        vec4 diffuseComponent = vec4(0.0);
+        vec4 specularComponent = vec4(0.0);
+        vec3 normal = normalize(mynormal);
+        vec3 eyePos = vec3(0.0);
+//        for (int i = 0; i < numused; i++) {
+//            
+//            vec4 lightDirection = normalize(lightposn[i] - myvertex);
+//            float diffuseIntensity = max(dot(normal, lightDirection), 0.0);
+//            diffuseComponent += diffuseIntensity * lightcolor[i];
+//            vec4 viewDirection = normalize(eyePos-myvertex);
+//
+//        }
 
         // Color all pixels black for now, remove this in your implementation!
-        finalcolor = vec4(0.0f, 0.0f, 0.0f, 1.0f); 
+        finalcolor = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
 
         fragColor = finalcolor; 
     } else {
