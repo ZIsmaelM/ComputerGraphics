@@ -43,7 +43,7 @@ void transformvec (const GLfloat input[4], GLfloat output[4])
 
 void display() 
 {
-  glClearColor(0, 0, 1, 0);
+  glClearColor(0.5, 0.5, 0.5, 0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Set up the camera view
@@ -69,7 +69,7 @@ void display()
     // The lightransf[] array in variables.h and transformvec() might also be useful here.
     // Remember that light positions must be transformed by modelview.
 
-    glUniformMatrix4fv(glGetUniformLocation(vertexshader, "modelview"), 1, false, &modelview[0][0]);
+   /* glUniformMatrix4fv(glGetUniformLocation(vertexshader, "modelview"), 1, false, &modelview[0][0]);
 
     GLuint lightPositionID = glGetUniformLocation(fragmentshader, "lightposn");
     GLuint lightColorID = glGetUniformLocation(fragmentshader, "lightcolor");
@@ -81,7 +81,7 @@ void display()
         glUniform4f(lightColorID, lightcolor[4 * i], lightcolor[4 * i + 1], lightcolor[4 * i + 2], lightcolor[4 * i + 3]);
         transformvec(currentLight, transformedLight);
         glUniform4f(lightTransformID, transformedLight[0], transformedLight[1], transformedLight[2], transformedLight[3]);
-    }
+    }*/
 
   } else {
     glUniform1i(enablelighting,false); 
@@ -95,8 +95,10 @@ void display()
   // YOUR CODE FOR HW 2 HERE.  
   // You need to use scale, translate and modelview to 
   // set up the net transformation matrix for the objects.  
-  // Account for GLM issues, matrix order (!!), etc.  
-
+  // Account for GLM issues, matrix order (!!), etc.
+  transf = transf * tr;
+  transf = transf * sc;
+  transf = transf * modelview;
 
   // The object draw functions will need to further modify the top of the stack,
 
@@ -112,6 +114,18 @@ void display()
     // Set up the object transformations 
     // And pass in the appropriate material properties
     // Again glUniform() related functions will be useful
+    modelview = modelview * obj->transform;
+    glUniform4fv(modelviewPos, 1, &modelview[0][0]);
+    glUniform4f(glGetUniformLocation(fragmentshader, "ambient"),
+        obj->ambient[0], obj->ambient[1], obj->ambient[2], obj->ambient[3]);
+    glUniform4f(glGetUniformLocation(fragmentshader, "diffuse"),
+        obj->diffuse[0], obj->diffuse[1], obj->diffuse[2], obj->diffuse[3]);
+    glUniform4f(glGetUniformLocation(fragmentshader, "specular"),
+        obj->specular[0], obj->specular[1], obj->specular[2], obj->specular[3]);
+    glUniform4f(glGetUniformLocation(fragmentshader, "emission"),
+        obj->emission[0], obj->emission[1], obj->emission[2], obj->emission[3]);
+    glUniform1f(glGetUniformLocation(fragmentshader, "shininess"), obj->shininess);
+
 
     // Actually draw the object
     // We provide the actual drawing functions for you.  

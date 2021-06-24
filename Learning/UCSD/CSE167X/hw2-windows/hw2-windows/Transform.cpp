@@ -88,7 +88,7 @@ mat4 Transform::perspective(float fovy, float aspect, float zNear, float zFar)
 {
     // YOUR CODE FOR HW2 HERE
     // New, to implement the perspective transform as well.
-    float d = cos(fovy / 2) / sin(fovy / 2);
+    float d = cos(glm::radians(fovy / 2)) / sin(glm::radians(fovy / 2));
     float A = -(zFar + zNear) / (zFar - zNear);
     float B = -(2 * zFar * zNear) / (zFar - zNear);
 

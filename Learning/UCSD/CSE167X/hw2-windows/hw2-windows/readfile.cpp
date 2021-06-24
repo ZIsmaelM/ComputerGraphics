@@ -71,7 +71,8 @@ void readfile(const char* filename)
 {
     string str, cmd; 
     ifstream in;
-    in.open(filename); 
+    in.open(filename);
+    std::cout << "Opening file: " << filename << std::endl;
     if (in.is_open()) {
 
         // I need to implement a matrix stack to store transforms.  
@@ -104,18 +105,18 @@ void readfile(const char* filename)
                             // Note that values[0...7] shows the read in values 
                             // Make use of lightposn[] and lightcolor[] arrays in variables.h
                             // Those arrays can then be used in display too.
-                            for (i = 0; i < 8; i++) {
-                                lightposn[i * 4 + 0] = values[0];
-                                lightposn[i * 4 + 1] = values[1];
-                                lightposn[i * 4 + 2] = values[2];
-                                // should be treated as directional light if w = 0 else point light
-                                lightposn[i * 4 + 3] = values[3];
+                            //for (i = 0; i < 8; i++) {
+                            //    lightposn[i * 4 + 0] = values[0];
+                            //    lightposn[i * 4 + 1] = values[1];
+                            //    lightposn[i * 4 + 2] = values[2];
+                            //    // should be treated as directional light if w = 0 else point light
+                            //    lightposn[i * 4 + 3] = values[3];
 
-                                lightcolor[i * 4 + 0] = values[4];
-                                lightcolor[i * 4 + 1] = values[5];
-                                lightcolor[i * 4 + 2] = values[6];
-                                lightcolor[i * 4 + 3] = 1; // setting alpha to 1
-                            }
+                            //    lightcolor[i * 4 + 0] = values[4];
+                            //    lightcolor[i * 4 + 1] = values[5];
+                            //    lightcolor[i * 4 + 2] = values[6];
+                            //    lightcolor[i * 4 + 3] = 1; // setting alpha to 1
+                            //}
 
                             ++numused; 
                         }
@@ -175,7 +176,7 @@ void readfile(const char* filename)
                         // You may need to use the upvector fn in Transform.cpp
                         // to set up correctly. 
                         // Set eyeinit upinit center fovy in variables.h
-                        eyeinit.x = values[0];
+                        /*eyeinit.x = values[0];
                         eyeinit.y = values[1];
                         eyeinit.z = values[2];
 
@@ -191,7 +192,7 @@ void readfile(const char* filename)
                         upinit.y = normalizedUp.y;
                         upinit.z = normalizedUp.z;
 
-                        fovy = values[9];
+                        fovy = values[9];*/
                     }
                 }
 
@@ -240,8 +241,8 @@ void readfile(const char* filename)
                         // Think about how the transformation stack is affected
                         // You might want to use helper functions on top of file. 
                         // Also keep in mind what order your matrix is!
-
-
+                        mat4 translationMatrix = Transform::translate(values[0], values[1], values[2]);
+                        rightmultiply(translationMatrix, transfstack);
                     }
                 }
                 else if (cmd == "scale") {
@@ -252,7 +253,8 @@ void readfile(const char* filename)
                         // Think about how the transformation stack is affected
                         // You might want to use helper functions on top of file.  
                         // Also keep in mind what order your matrix is!
-
+                        mat4 scaleMatrix = Transform::translate(values[0], values[1], values[2]);
+                        rightmultiply(scaleMatrix, transfstack);
                     }
                 }
                 else if (cmd == "rotate") {
@@ -265,7 +267,8 @@ void readfile(const char* filename)
                         // See how the stack is affected, as above.  
                         // Note that rotate returns a mat3. 
                         // Also keep in mind what order your matrix is!
-
+                        mat4 rotationMatrix = Transform::rotate(values[3], vec3(values[0], values[1], values[2]));
+                        rightmultiply(rotationMatrix, transfstack);
                     }
                 }
 
@@ -292,7 +295,7 @@ void readfile(const char* filename)
 
         eye = eyeinit; 
         up = upinit; 
-        amount = 5;
+        amount = 0.01;
         sx = sy = 1.0;  // keyboard controlled scales in x and y 
         tx = ty = 0.0;  // keyboard controllled translation in x and y  
         useGlu = false; // don't use the glu perspective/lookat fns
