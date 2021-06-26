@@ -44,19 +44,36 @@ void main (void)
         vec4 ambientComponent = ambient + emission;
         vec4 diffuseComponent = vec4(0.0);
         vec4 specularComponent = vec4(0.0);
-        vec3 normal = normalize(mynormal);
-        vec3 eyePos = vec3(0.0);
-//        for (int i = 0; i < numused; i++) {
-//            
-//            vec4 lightDirection = normalize(lightposn[i] - myvertex);
-//            float diffuseIntensity = max(dot(normal, lightDirection), 0.0);
-//            diffuseComponent += diffuseIntensity * lightcolor[i];
-//            vec4 viewDirection = normalize(eyePos-myvertex);
-//
-//        }
+        vec4 normal = vec4(normalize(mynormal), 0.0);
+        vec3 eyePos = vec4(0.0);
+        vec3 fragpos = myvertex.xyz / myvertex.w;
+        for (int i = 0; i < numused; i++) {
+            
+            vec3 viewDirection = normalize(eyePos-fragpos);
+
+            // Directional Light
+            if (lightposn[3] == 0.0) {
+                vec3 lightDirection = normalize(); // need to determine direction
+            }
+            // Point Light
+            else {
+                vec3 lightpos = lightposn[i].xyz / lightposn[i].w; // dehomoginize the pos
+                vec3 lightDirection = normalize(lightpos - fragpos);
+
+
+
+            }
+            
+            float diffuseIntensity = max(dot(normal, lightDirection), 0.0);
+            diffuseComponent += diffuse * diffuseIntensity * lightcolor[i];
+
+            vec4 reflectDirection = reflect(-lightDirection, normal);
+            float specularIntensity = pow(max(dot(viewDirection, reflectDirection), 0.0), shininess);
+            specularComponent += specular * specularIntensity * lightcolor[i];
+        }
 
         // Color all pixels black for now, remove this in your implementation!
-        finalcolor = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
+        finalcolor = ambientComponent + diffuseComponent + specularComponent; //vec4(1.0f, 1.0f, 1.0f, 1.0f); 
 
         fragColor = finalcolor; 
     } else {
