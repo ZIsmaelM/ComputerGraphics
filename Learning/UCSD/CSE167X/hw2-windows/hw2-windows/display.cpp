@@ -69,15 +69,15 @@ void display()
     // glUniform4fv() and similar functions will be useful. See FAQ for help with these functions.
     // The lightransf[] array in variables.h and transformvec() might also be useful here.
     // Remember that light positions must be transformed by modelview.
-
-    GLfloat transformedLight[4];
+ 
     glUniform1i(numusedcol, numused);
+    GLfloat transformedLights[4 * numLights] = { 0.0 };
     for (int i = 0; i < numused; i++) {
         GLfloat currentLight[4] = { lightposn[4 * i], lightposn[4 * i + 1], lightposn[4 * i + 2], lightposn[4 * i + 3] };
-        transformvec(currentLight, transformedLight);
-        glUniform4f(lightpos, transformedLight[0], transformedLight[1], transformedLight[2], transformedLight[3]);
-        glUniform4f(lightcol, lightcolor[4 * i], lightcolor[4 * i + 1], lightcolor[4 * i + 2], lightcolor[4 * i + 3]);
+        transformvec(currentLight, &transformedLights[4*i]);
     }
+    glUniform4fv(lightpos, numLights, transformedLights);
+    glUniform4fv(lightcol, numLights, lightcolor);
 
   } else {
     glUniform1i(enablelighting,false); 

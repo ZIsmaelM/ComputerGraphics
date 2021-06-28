@@ -34,48 +34,54 @@ uniform vec4 specular;
 uniform vec4 emission; 
 uniform float shininess; 
 
+vec4 ComputeLight(vec3 lightDirection, vec4 lightColor, vec3 normal, vec3 halfVector)
+{
+    float diffuseIntensity = max(dot(lightDirection, normal), 0.0);
+    vec4 diffuseComponent = lightColor * diffuse * diffuseIntensity;
+    float specularIntensity = max(dot(halfVector, normal), 0.0);
+    vec4 specularComponent = lightColor * specular * pow(specularIntensity, shininess);
+
+    return diffuseComponent + specularComponent;
+}
+
 void main (void) 
 {       
     if (enablelighting) {       
-        vec4 finalcolor; 
+        vec4 finalcolor = vec4(0.0, 0.0, 0.0, 1.0); 
 
         // YOUR CODE FOR HW 2 HERE
         // A key part is implementation of the fragment shader
-        vec4 ambientComponent = ambient + emission;
-        vec4 diffuseComponent = vec4(0.0);
-        vec4 specularComponent = vec4(0.0);
-        vec4 normal = vec4(normalize(mynormal), 0.0);
-        vec3 eyePos = vec4(0.0);
-        vec3 fragpos = myvertex.xyz / myvertex.w;
+        mat3 normalMatrix = mat3(transpose(inverse(modelview)));
+        vec3 newNormal = normalize(normalMatrix * mynormal);
+        vec4 newVertex = modelview * myvertex;
+        vec3 fragpos = newVertex.xyz / newVertex.w;
+
+        vec4 aggregateLight = vec4(0.0, 0.0, 0.0, 1.0);
+        vec3 eyePos = vec3(0.0);
+        
         for (int i = 0; i < numused; i++) {
             
-            vec3 viewDirection = normalize(eyePos-fragpos);
+            vec3 viewDirection = normalize(eyePos - fragpos);
 
             // Directional Light
-            if (lightposn[3] == 0.0) {
-                vec3 lightDirection = normalize(); // need to determine direction
+            if (lightposn[i].w == 0.0) {
+                vec3 lightDirection = normalize(lightposn[i].xyz);
+                vec3 halfVector = normalize(lightDirection + viewDirection);
+                aggregateLight += ComputeLight(lightDirection, lightcolor[i], newNormal, halfVector);
             }
             // Point Light
             else {
                 vec3 lightpos = lightposn[i].xyz / lightposn[i].w; // dehomoginize the pos
                 vec3 lightDirection = normalize(lightpos - fragpos);
-
-
-
+                vec3 halfVector = normalize(lightDirection + viewDirection);
+                aggregateLight += ComputeLight(lightDirection, lightcolor[i], newNormal, halfVector);
             }
-            
-            float diffuseIntensity = max(dot(normal, lightDirection), 0.0);
-            diffuseComponent += diffuse * diffuseIntensity * lightcolor[i];
-
-            vec4 reflectDirection = reflect(-lightDirection, normal);
-            float specularIntensity = pow(max(dot(viewDirection, reflectDirection), 0.0), shininess);
-            specularComponent += specular * specularIntensity * lightcolor[i];
         }
 
         // Color all pixels black for now, remove this in your implementation!
-        finalcolor = ambientComponent + diffuseComponent + specularComponent; //vec4(1.0f, 1.0f, 1.0f, 1.0f); 
+        finalcolor = ambient + aggregateLight;
 
-        fragColor = finalcolor; 
+        fragColor = finalcolor;
     } else {
         fragColor = vec4(color, 1.0f); 
     }

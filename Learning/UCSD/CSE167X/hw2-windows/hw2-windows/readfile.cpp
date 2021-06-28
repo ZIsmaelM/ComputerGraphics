@@ -105,19 +105,15 @@ void readfile(const char* filename)
                             // Note that values[0...7] shows the read in values 
                             // Make use of lightposn[] and lightcolor[] arrays in variables.h
                             // Those arrays can then be used in display too.
-                            //for (i = 0; i < 8; i++) {
-                            //    lightposn[i * 4 + 0] = values[0];
-                            //    lightposn[i * 4 + 1] = values[1];
-                            //    lightposn[i * 4 + 2] = values[2];
-                            //    // should be treated as directional light if w = 0 else point light
-                            //    lightposn[i * 4 + 3] = values[3];
+                            lightposn[numused * 4 + 0] = values[0];
+                            lightposn[numused * 4 + 1] = values[1];
+                            lightposn[numused * 4 + 2] = values[2];
+                            lightposn[numused * 4 + 3] = values[3];
 
-                            //    lightcolor[i * 4 + 0] = values[4];
-                            //    lightcolor[i * 4 + 1] = values[5];
-                            //    lightcolor[i * 4 + 2] = values[6];
-                            //    lightcolor[i * 4 + 3] = 1; // setting alpha to 1
-                            //}
-
+                            lightcolor[numused * 4 + 0] = values[4];
+                            lightcolor[numused * 4 + 1] = values[5];
+                            lightcolor[numused * 4 + 2] = values[6];
+                            lightcolor[numused * 4 + 3] = 1; // setting alpha to 1
                             ++numused; 
                         }
                     }
