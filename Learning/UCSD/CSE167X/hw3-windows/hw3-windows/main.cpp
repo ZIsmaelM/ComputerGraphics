@@ -39,7 +39,10 @@ int main(int argc, char* argv[])
 	glutCreateWindow("HW3: Ray-Tracer");
 
 	Image foo = Image(WIDTH, HEIGHT, WIDTH * 3, 24);
-	foo.SaveImage("test_image.png");
+	int numSamples = foo.width_ * foo.height_;
+	uint8_t* pixels = new uint8_t[3 * numSamples];
+	foo.SaveImage("test_image.png", pixels, numSamples);
+	delete[] pixels;
 
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);

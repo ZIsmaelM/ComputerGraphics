@@ -15,6 +15,6 @@ public:
 	Image(int w, int h, int bytesPerRow, int bitsPerPixel);
 	virtual ~Image();
 
-	void SaveImage(std::string fname);
+	void SaveImage(std::string fname, uint8_t* pixels, int numSamples);
 
 };
