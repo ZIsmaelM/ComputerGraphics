@@ -3,14 +3,10 @@
 #define PI 3.14159265359
 
 class Triangle
-{
-
-};
+{};
 
 class Sphere
-{
-
-};
+{};
 
 class Vector3
 {
@@ -22,7 +18,6 @@ public:
 	Vector3();
 	Vector3(float, float, float);
 	~Vector3();
-	//void Normalize();
 
 	Vector3 operator+(Vector3);
 	Vector3 operator-(Vector3);
@@ -41,13 +36,15 @@ public:
 	Vector4();
 	Vector4(float, float, float, float);
 	~Vector4();
-	//void Normalize();
 
-	Vector4 operator+(Vector3);
-	Vector4 operator-(Vector3);
+	Vector4 operator+(Vector4);
+	Vector4 operator-(Vector4);
 	Vector4 operator*(float);
 	Vector4 operator/(float);
 };
+
+Vector3 Normalize(Vector3 v) {}
+Vector4 Normalize(Vector4 v) {}
 
 // Note: Matrices use column major order
 class Matrix3
@@ -82,36 +79,16 @@ public:
 	Matrix4();
 	Matrix4(float);
 	Matrix4(Vector4, Vector4, Vector4, Vector4);
+	Matrix4(Matrix3);
 	// TODO: add additional constructors
 	~Matrix4();
 
-	void Translate(float, float, float);
-	void Rotate(Vector3, float);
-	void Scale(float, float, float);
 };
 
-Matrix4 Cross4(Matrix4 a, Matrix4 b)
-{
+Matrix4 Translate(float, float, float);
+Matrix3 Rotate(Vector3, float);
+Matrix4 Scale(float, float, float);
 
-}
-
-Vector3 Normalize(Vector3 v)
-{
-	float norm = sqrt(pow(v.x_, 2) + pow(v.y_, 2) + pow(v.z_, 2));
-	return v / norm;
-}
-Vector4 Normalize(Vector4 v)
-{
-
-}
-Matrix3 Normalize(Matrix3)
-{
-
-}
-Matrix4 Normalize(Matrix4)
-{
-
-}
 float ToRadians(float degrees)
 {
 	return degrees * PI / 180;
