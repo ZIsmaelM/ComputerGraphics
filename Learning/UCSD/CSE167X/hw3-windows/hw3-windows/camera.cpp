@@ -6,7 +6,7 @@ Camera::Camera()
 
 }
 
-Camera::Camera(std::vector<float> position, std::vector<float> viewDirection, std::vector<float> up, float fovy)
+Camera::Camera(Vector3 position, Vector3 viewDirection, Vector3 up, float fovy)
 	: position_{ position }, viewDirection_{ viewDirection }, up_{ up }, fovy_{ fovy }
 {
 }

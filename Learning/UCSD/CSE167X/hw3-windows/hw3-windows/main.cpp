@@ -3,8 +3,8 @@
 #include <FreeImage.h>
 #include "image.h"
 
-#define WIDTH 600
-#define HEIGHT 400
+const int WIDTH = 100;
+const int HEIGHT = 100;
 
 void keyboard(unsigned char key, int x, int y)
 {
@@ -41,6 +41,17 @@ int main(int argc, char* argv[])
 	Image foo = Image(WIDTH, HEIGHT, WIDTH * 3, 24);
 	int numSamples = foo.width_ * foo.height_;
 	uint8_t* pixels = new uint8_t[3 * numSamples];
+
+	for (int i = 0; i < HEIGHT; i++)
+	{
+		for (int j = 0; j < WIDTH; j++)
+		{
+			// 1) get sample
+			// 2) get ray
+			// 3) color pixel
+		}
+	}
+
 	foo.SaveImage("test_image.png", pixels, numSamples);
 	delete[] pixels;
 

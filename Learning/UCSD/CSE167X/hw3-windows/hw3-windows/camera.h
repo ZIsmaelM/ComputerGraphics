@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include "geometry.h"
 
 // Camera will receive the following inputs from the test files
 // lookfromX, lookfromY, lookfromZ
@@ -11,12 +11,12 @@
 class Camera
 {
 public:
-	std::vector<float> position_;
-	std::vector<float> viewDirection_;
-	std::vector<float> up_;
+	Vector3 position_;
+	Vector3 viewDirection_;
+	Vector3 up_;
 	float fovy_;
 
 	Camera();
-	Camera(std::vector<float> position, std::vector<float> viewDirection, std::vector<float> up, float fovy);
+	Camera(Vector3 position, Vector3 viewDirection, Vector3 up, float fovy);
 	virtual ~Camera();
 };
