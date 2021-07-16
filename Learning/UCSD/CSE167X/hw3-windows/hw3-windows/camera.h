@@ -1,6 +1,5 @@
 #pragma once
-
-#include "geometry.h"
+#include "transform.h"
 
 // Camera will receive the following inputs from the test files
 // lookfromX, lookfromY, lookfromZ

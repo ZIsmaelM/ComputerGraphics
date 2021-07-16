@@ -131,6 +131,15 @@ Vector4 Normalize(Vector4 v)
 	return v / norm;
 }
 
+Vector3 Cross(Vector3 a, Vector3 b)
+{
+	float i = a.y_ * b.z_ - a.z_ * b.y_;
+	float j = -(a.x_ * b.z_ - a.z_ * b.x_);
+	float k = a.x_ * b.y_ - a.y_ * b.x_;
+
+	return Vector3(i, j, k);
+}
+
 Matrix3::Matrix3()
 	: mat_{ 1.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,1.0f }
 {}
@@ -154,6 +163,16 @@ Matrix3::Matrix3(Vector3 column0, Vector3 column1, Vector3 column2)
 }
 
 Matrix3::~Matrix3() {}
+
+Vector3 Matrix3::row(int index)
+{
+	return Vector3(mat_[index], mat_[index + 3], mat_[index + 6]);
+}
+
+Vector3 Matrix3::column(int index)
+{
+	return Vector3(mat_[index*3], mat_[index*3 + 1], mat_[index*3 + 2]);
+}
 
 Matrix3 operator+(Matrix3 a, Matrix3 b)
 {

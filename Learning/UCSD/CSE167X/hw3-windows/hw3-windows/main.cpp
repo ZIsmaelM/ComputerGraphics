@@ -1,10 +1,15 @@
 #include <iostream>
 #include <GL/glut.h>
 #include <FreeImage.h>
+#include "globals.h"
 #include "image.h"
+#include "geometry.h"
+#include "raycaster.h"
 
 const int WIDTH = 100;
 const int HEIGHT = 100;
+const float FOVX = 90.0f;
+const float FOVY = 90.0f;
 
 void keyboard(unsigned char key, int x, int y)
 {
@@ -41,13 +46,14 @@ int main(int argc, char* argv[])
 	Image foo = Image(WIDTH, HEIGHT, WIDTH * 3, 24);
 	int numSamples = foo.width_ * foo.height_;
 	uint8_t* pixels = new uint8_t[3 * numSamples];
-
+	Camera cam;
 	for (int i = 0; i < HEIGHT; i++)
 	{
 		for (int j = 0; j < WIDTH; j++)
 		{
-			// 1) get sample
-			// 2) get ray
+			// 1) get ray
+			Vector3 ray = GenerateRay(cam, i, j);
+			// 2) get intersection
 			// 3) color pixel
 		}
 	}

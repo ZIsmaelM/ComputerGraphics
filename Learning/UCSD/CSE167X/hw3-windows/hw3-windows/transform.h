@@ -13,7 +13,7 @@ public:
 
 	Vector3 operator+(Vector3);
 	Vector3 operator-(Vector3);
-	Vector3 operator*(float);
+	Vector3 operator*(float); //TODO move outside of class and make symmetric
 	Vector3 operator/(float);
 };
 
@@ -35,8 +35,9 @@ public:
 	Vector4 operator/(float);
 };
 
-Vector3 Normalize(Vector3 v);
-Vector4 Normalize(Vector4 v);
+Vector3 Normalize(Vector3);
+Vector4 Normalize(Vector4);
+Vector3 Cross(Vector3, Vector3);
 
 // Note: Matrices use column major order
 class Matrix3
@@ -50,6 +51,8 @@ public:
 	// TODO: add additional constructors
 	~Matrix3();
 
+	Vector3 row(int);
+	Vector3 column(int);
 	int length() { return 9; }
 };
 
