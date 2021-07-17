@@ -8,28 +8,40 @@ Materials::Materials(float ambi, float diff, float spec, float shine)
 {}
 Materials::~Materials() {}
 
+
+Shape::Shape()
+	: material_(Materials())
+{}
+Shape::Shape(Materials m)
+	: material_{ m }
+{}
+Shape::~Shape() {}
+
+
 Triangle::Triangle() 
-	: vertices_{ Vector3(-1.0f,0.0f,0.0f), Vector3(1.0f,0.0f,0.0f), Vector3(0.0f,1.0f,0.0f) }
-	, material_{ Materials() }
+	: Shape{ Materials() },
+	vertices_ {Vector3(-1.0f, 0.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)}
 {}
-
 Triangle::Triangle(Vector3 a, Vector3 b, Vector3 c)
-	: vertices_{ a, b, c }, material_{ Materials() }
+	: Shape{ Materials() }, vertices_{ a, b, c }
 {}
-
 Triangle::Triangle(Vector3* vertices)
-	: vertices_{ vertices[0], vertices[1], vertices[2] }, material_{ Materials() }
+	: Shape{ Materials() }, 
+	vertices_{ vertices[0], vertices[1], vertices[2] }
 {}
-
 Triangle::~Triangle() {}
 
+
 Sphere::Sphere()
-	: center_{ Vector3(0.0f,0.0f,0.0f) }, radius_{ 1.0f }, material_{ Materials() }
+	: Shape{ Materials() }, center_{ Vector3(0.0f,0.0f,0.0f) }, radius_{ 1.0f }
 {}
-
 Sphere::Sphere(Vector3 center, float radius, Materials material)
-	: center_{ center }, radius_{ radius }, material_{ material }
+	: Shape{ material }, center_{ center }, radius_{ radius }
 {}
-
 Sphere::~Sphere() {}
+
+Vector3 IntersectTest(Vector3 ray)
+{
+	return Vector3();
+}
 

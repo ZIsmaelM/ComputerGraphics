@@ -1,5 +1,6 @@
 #pragma once
 #include "transform.h"
+#include "raycaster.h"
 
 class Materials
 {
@@ -14,11 +15,22 @@ public:
 	~Materials();
 };
 
-class Triangle
+class Shape
+{
+public:
+	Shape* primitives_;
+	Materials material_;
+	int numPrimitives_;
+
+	Shape();
+	Shape(Materials);
+	~Shape();
+};
+
+class Triangle : public Shape
 {
 public:
 	Vector3 vertices_[3];
-	Materials material_;
 
 	Triangle();
 	Triangle(Vector3, Vector3, Vector3);
@@ -26,14 +38,16 @@ public:
 	~Triangle();
 };
 
-class Sphere
+class Sphere : public Shape
 {
 public:
 	Vector3 center_;
 	float radius_;
-	Materials material_;
 
 	Sphere();
 	Sphere(Vector3, float, Materials);
 	~Sphere();
 };
+
+Vector3 IntersectTriangle(Vector3, Triangle);
+Vector3 IntersectSphere(Vector3, Sphere);

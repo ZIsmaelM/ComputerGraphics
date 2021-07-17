@@ -5,6 +5,7 @@
 #include "image.h"
 #include "geometry.h"
 #include "raycaster.h"
+#include "scene.h"
 
 const int WIDTH = 100;
 const int HEIGHT = 100;
@@ -43,10 +44,14 @@ int main(int argc, char* argv[])
 	glutInitWindowSize(WIDTH, HEIGHT);
 	glutCreateWindow("HW3: Ray-Tracer");
 
+	// TODO: placeholder variables that need proper initialization
 	Image foo = Image(WIDTH, HEIGHT, WIDTH * 3, 24);
 	int numSamples = foo.width_ * foo.height_;
 	uint8_t* pixels = new uint8_t[3 * numSamples];
 	Camera cam;
+	Scene scene;
+
+
 	for (int i = 0; i < HEIGHT; i++)
 	{
 		for (int j = 0; j < WIDTH; j++)
@@ -54,6 +59,7 @@ int main(int argc, char* argv[])
 			// 1) get ray
 			Vector3 ray = GenerateRay(cam, i, j);
 			// 2) get intersection
+			Vector3 intersectPoint = IntersectTest(scene, ray);
 			// 3) color pixel
 		}
 	}

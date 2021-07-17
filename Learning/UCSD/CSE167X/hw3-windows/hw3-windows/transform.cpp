@@ -108,7 +108,7 @@ Vector4 Vector4::operator/(float scalar)
 	if (scalar == 0)
 	{
 		std::cout << "ERROR: Can't divide by zero" << std::endl;
-		// TODO: Exit program
+		exit(0);
 	}
 	Vector4 result;
 	result.x_ = x_ / scalar;

@@ -1,16 +1,19 @@
 #pragma once
 
-#include <vector>
+#include "transform.h"
+#include "geometry.h"
+#include "camera.h"
 
 class Scene
 {
 public:
-	std::vector<float> eyePosition_;
-	std::vector<float> corners_;
-	int width_;
-	int height_;
+	Camera camera_;
+	Shape* shapes_;
+	int numShapes_;
 
 	Scene();
-	Scene(std::vector<float> eyePosition, std::vector<float> corners, int width, int height);
+	Scene(Camera, Shape*);
 	virtual ~Scene();
 };
+
+Vector3 IntersectTest(Scene, Vector3);
