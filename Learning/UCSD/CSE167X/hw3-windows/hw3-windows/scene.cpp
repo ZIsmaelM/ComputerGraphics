@@ -1,23 +1,28 @@
 #include "scene.h"
 
 Scene::Scene()
-	: camera_{ Camera() }, shapes_{ nullptr }
+	: camera_{ Camera() }, spheres_{ nullptr }, numSpheres_{ 0 }, triangles_{ nullptr }, numTriangles_{ 0 }
 {}
-Scene::Scene(Camera cam, Shape* shapes)
-	: camera_{ cam }, shapes_{ shapes }
+Scene::Scene(Camera cam, Sphere* spheres, int numSpheres_, Triangle* triangles, int numTriangles_)
+	: camera_{ cam }, spheres_{ spheres }, numSpheres_{ numSpheres_ }, triangles_{ triangles }, numTriangles_{ numTriangles_ }
 {}
 Scene::~Scene() {}
 
 
-Vector3 IntersectTest(Scene scene, Vector3 ray)
+Vector3 FindIntersection(Scene scene, Ray ray)
 {
-	// Test each object in the scene
-	for (int i = 0; i < scene.numShapes_; i++)
+	// Test each sphere in the scene
+	for (int i = 0; i < scene.numSpheres_; i++)
 	{
-		Shape currentShape = scene.shapes_[i];
-		for (int j = 0; j < currentShape.numPrimitives_; j++)
+		Sphere currentSphere = scene.spheres_[i];
+		for (int j = 0; j < currentSphere.numPrimitives_; j++)
 		{
-			// TODO: need to check primitive type
+			float intersectDistance = SphereIntersect(ray, currentSphere);
 		}
 	}
+
+	// Test each triangle in the scene
+
+
+	return Vector3();
 }

@@ -1,3 +1,4 @@
+#include <cmath>
 #include "geometry.h"
 
 Materials::Materials()
@@ -40,8 +41,29 @@ Sphere::Sphere(Vector3 center, float radius, Materials material)
 {}
 Sphere::~Sphere() {}
 
-Vector3 IntersectTest(Vector3 ray)
+float SphereIntersect(Ray ray, Sphere sphere)
 {
-	return Vector3();
+	// quadratic equation
+	float a = Dot(ray.direction_, ray.direction_);
+	float b = 2 * Dot(ray.direction_, ray.origin_ - sphere.center_);
+	float c = Dot(ray.origin_ - sphere.center_, ray.origin_ - sphere.center_) - pow(sphere.radius_, 2);
+
+	float discriminant = pow(b,2) - 4 * a * c;
+	float t0 = (-b - sqrt(discriminant)) / (2 * a);
+	float t1 = (-b + sqrt(discriminant)) / (2 * a);
+
+	// no intersection
+	if (discriminant < 0)
+		return -1;
+	// intersection is tangent
+	if (discriminant == 0)
+		return t0;
+	// return positive intersection
+	if (t0 < 0)
+		return t1;
+	if (t1 < 0)
+		return t0;
+	// both positive return minimum
+	return fmin(t0, t1);
 }
 

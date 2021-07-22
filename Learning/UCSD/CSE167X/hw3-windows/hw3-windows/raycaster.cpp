@@ -2,6 +2,15 @@
 #include "globals.h"
 #include "raycaster.h"
 
+Ray::Ray()
+	: origin_{ Vector3() }, direction_{ Vector3() }
+{}
+
+Ray::Ray(Vector3 origin, Vector3 direction)
+	: origin_{ origin }, direction_{ direction }
+{}
+
+Ray::~Ray() {}
 
 Matrix3 LookAt(Camera cam)
 {
@@ -14,7 +23,7 @@ Matrix3 LookAt(Camera cam)
 	return Matrix3(u, v, w);
 }
 
-Vector3 GenerateRay(Camera camera, int pixelX, int pixelY)
+Ray GenerateRay(Camera camera, int pixelX, int pixelY)
 {
 	// get the eye/camera coordinates
 	Matrix3 cameraCoordinates = LookAt(camera);
@@ -23,8 +32,8 @@ Vector3 GenerateRay(Camera camera, int pixelX, int pixelY)
 	float alpha = tan(FOVX / 2) * ((pixelX - WIDTH / 2) / (WIDTH / 2));
 	float beta = tan(FOVY / 2) * ((HEIGHT / 2 - pixelY) / (HEIGHT / 2));
 
-	Vector3 ray = camera.position_ + Normalize(cameraCoordinates.column(0) * alpha
+	Vector3 rayDirection = camera.position_ + Normalize(cameraCoordinates.column(0) * alpha
 		+ cameraCoordinates.column(1) * beta - cameraCoordinates.column(2));
-
-	return ray;
+	
+	return Ray(camera.position_, rayDirection);
 }

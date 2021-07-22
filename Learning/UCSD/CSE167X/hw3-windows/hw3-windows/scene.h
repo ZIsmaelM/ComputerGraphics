@@ -8,12 +8,14 @@ class Scene
 {
 public:
 	Camera camera_;
-	Shape* shapes_;
-	int numShapes_;
+	Sphere* spheres_;
+	int numSpheres_;
+	Triangle* triangles_;
+	int numTriangles_;
 
 	Scene();
-	Scene(Camera, Shape*);
+	Scene(Camera, Sphere*, int, Triangle*, int);
 	virtual ~Scene();
 };
 
-Vector3 IntersectTest(Scene, Vector3);
+Vector3 FindIntersection(Scene, Ray);

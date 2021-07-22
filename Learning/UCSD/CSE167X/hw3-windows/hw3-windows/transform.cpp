@@ -140,6 +140,11 @@ Vector3 Cross(Vector3 a, Vector3 b)
 	return Vector3(i, j, k);
 }
 
+float Dot(Vector3 a, Vector3 b)
+{
+	return a.x_ * b.x_ + a.y_ * b.y_ + a.z_ + b.z_;
+}
+
 Matrix3::Matrix3()
 	: mat_{ 1.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,1.0f }
 {}

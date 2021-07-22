@@ -12,37 +12,11 @@ const int HEIGHT = 100;
 const float FOVX = 90.0f;
 const float FOVY = 90.0f;
 
-void keyboard(unsigned char key, int x, int y)
-{
-	switch (key) {
-	case 27:
-		exit(0);
-		break;
-	}
-}
-
-void reshape(int w, int h)
-{
-	glViewport(0, 0, w, h);
-}
-
-void display(void)
-{
-	glClearColor(0.3, 0.3, 0.3, 0.0);
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	glutSwapBuffers();
-}
-
 int main(int argc, char* argv[])
 {
 	std::cout << "Hello World!" << std::endl;
 
 	FreeImage_Initialise();
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-	glutInitWindowSize(WIDTH, HEIGHT);
-	glutCreateWindow("HW3: Ray-Tracer");
 
 	// TODO: placeholder variables that need proper initialization
 	Image foo = Image(WIDTH, HEIGHT, WIDTH * 3, 24);
@@ -57,20 +31,15 @@ int main(int argc, char* argv[])
 		for (int j = 0; j < WIDTH; j++)
 		{
 			// 1) get ray
-			Vector3 ray = GenerateRay(cam, i, j);
+			Ray ray = GenerateRay(cam, i, j);
 			// 2) get intersection
-			Vector3 intersectPoint = IntersectTest(scene, ray);
+			Vector3 intersectPoint = FindIntersection(scene, ray);
 			// 3) color pixel
 		}
 	}
 
 	foo.SaveImage("test_image.png", pixels, numSamples);
 	delete[] pixels;
-
-	glutDisplayFunc(display);
-	glutReshapeFunc(reshape);
-	glutKeyboardFunc(keyboard);
-	glutMainLoop();
 
 	FreeImage_DeInitialise();
 
