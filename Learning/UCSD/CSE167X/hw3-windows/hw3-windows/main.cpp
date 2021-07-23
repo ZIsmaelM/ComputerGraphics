@@ -6,6 +6,7 @@
 #include "geometry.h"
 #include "raycaster.h"
 #include "scene.h"
+#include "shader.h"
 
 const int WIDTH = 100;
 const int HEIGHT = 100;
@@ -22,8 +23,13 @@ int main(int argc, char* argv[])
 	Image foo = Image(WIDTH, HEIGHT, WIDTH * 3, 24);
 	int numSamples = foo.width_ * foo.height_;
 	uint8_t* pixels = new uint8_t[3 * numSamples];
-	Camera cam;
-	Scene scene;
+	Camera cam = Camera(Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), FOVY);
+	
+	Sphere sphereList[1];
+	Triangle triangleList[1];
+	sphereList[0] = Sphere(Vector3(0.0f, 0.0f, -2.0f), 0.5f, Materials());
+	triangleList[0] = Triangle();
+	Scene scene = Scene(cam, sphereList, 1, triangleList, 0);
 
 
 	for (int i = 0; i < HEIGHT; i++)
@@ -34,10 +40,17 @@ int main(int argc, char* argv[])
 			Ray ray = GenerateRay(cam, i, j);
 			// 2) get intersection
 			Vector3 intersectPoint = FindIntersection(scene, ray);
+			Vector3 color = Vector3(0xFF, 0x00, 0x00);
+			if (intersectPoint.x_ == -1 && intersectPoint.y_ == -1 && intersectPoint.z_ == -1)
+			{
+				color = Vector3(0x00, 0x00, 0xff);
+			}
 			// 3) color pixel
+			int pixelIndex = (i * WIDTH * 3) + j * 3;
+			ColorPixel(pixels, pixelIndex, color);
 		}
 	}
-
+	std::cout << "End!\n\n\n\n\n\n\n" << std::endl;
 	foo.SaveImage("test_image.png", pixels, numSamples);
 	delete[] pixels;
 

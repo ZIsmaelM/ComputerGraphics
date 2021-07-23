@@ -122,6 +122,8 @@ Vector4 Vector4::operator/(float scalar)
 Vector3 Normalize(Vector3 v)
 {
 	float norm = sqrt(pow(v.x_, 2) + pow(v.y_, 2) + pow(v.z_, 2));
+	if (norm == 0)
+		return Vector3(0, 0, 0);
 	return v / norm;
 }
 

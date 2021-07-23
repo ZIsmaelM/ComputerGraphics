@@ -15,19 +15,7 @@ public:
 	~Materials();
 };
 
-class Shape
-{
-public:
-	Shape* primitives_;
-	Materials material_;
-	int numPrimitives_;
-
-	Shape();
-	Shape(Materials);
-	~Shape();
-};
-
-class Triangle : public Shape
+class Triangle
 {
 public:
 	Vector3 vertices_[3];
@@ -38,7 +26,7 @@ public:
 	~Triangle();
 };
 
-class Sphere : public Shape
+class Sphere
 {
 public:
 	Vector3 center_;

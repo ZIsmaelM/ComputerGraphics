@@ -10,34 +10,32 @@ Materials::Materials(float ambi, float diff, float spec, float shine)
 Materials::~Materials() {}
 
 
-Shape::Shape()
-	: material_(Materials())
-{}
-Shape::Shape(Materials m)
-	: material_{ m }
-{}
-Shape::~Shape() {}
+//Shape::Shape()
+//	: material_{ Materials() }
+//{}
+//Shape::Shape(Materials m)
+//	: material_{ m }
+//{}
+//Shape::~Shape() {}
 
 
 Triangle::Triangle() 
-	: Shape{ Materials() },
-	vertices_ {Vector3(-1.0f, 0.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)}
+	: vertices_ {Vector3(-1.0f, 0.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f)}
 {}
 Triangle::Triangle(Vector3 a, Vector3 b, Vector3 c)
-	: Shape{ Materials() }, vertices_{ a, b, c }
+	: vertices_{ a, b, c }
 {}
 Triangle::Triangle(Vector3* vertices)
-	: Shape{ Materials() }, 
-	vertices_{ vertices[0], vertices[1], vertices[2] }
+	: vertices_{ vertices[0], vertices[1], vertices[2] }
 {}
 Triangle::~Triangle() {}
 
 
 Sphere::Sphere()
-	: Shape{ Materials() }, center_{ Vector3(0.0f,0.0f,0.0f) }, radius_{ 1.0f }
+	: center_{ Vector3(0.0f,0.0f,0.0f) }, radius_{ 1.0f }
 {}
 Sphere::Sphere(Vector3 center, float radius, Materials material)
-	: Shape{ material }, center_{ center }, radius_{ radius }
+	: center_{ center }, radius_{ radius }
 {}
 Sphere::~Sphere() {}
 
@@ -53,7 +51,7 @@ float SphereIntersect(Ray ray, Sphere sphere)
 	float t1 = (-b + sqrt(discriminant)) / (2 * a);
 
 	// no intersection
-	if (discriminant < 0)
+	if (discriminant < 0 || a == 0)
 		return -1;
 	// intersection is tangent
 	if (discriminant == 0)
