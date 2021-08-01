@@ -12,11 +12,11 @@ Ray::Ray(Vector3 origin, Vector3 direction)
 
 Ray::~Ray() {}
 
-Matrix3 LookAt(Camera cam)
+Matrix3 LookAt(Camera cam, Vector3 point)
 {
 	Vector3 up = Vector3(0.0f, 0.0f, 1.0f);
-	Vector3 center;
-	Vector3 w = Normalize(cam.position_ - center);
+	//Vector3 center;
+	Vector3 w = Normalize(cam.position_ - point);
 	Vector3 u = Normalize(Cross(up, w));
 	Vector3 v = Cross(w, u);
 
@@ -26,7 +26,8 @@ Matrix3 LookAt(Camera cam)
 Ray GenerateRay(Camera camera, int pixelX, int pixelY)
 {
 	// get the eye/camera coordinates
-	Matrix3 cameraCoordinates = LookAt(camera);
+	Vector3 point = Vector3(pixelX + 0.5f, pixelY + 0.5f, -1.0f);
+	Matrix3 cameraCoordinates = LookAt(camera, point);
 
 	// get the pixel's x and y displacement along image plane
 	float alpha = tan(FOVX / 2) * ((pixelX - WIDTH / 2) / (WIDTH / 2));
@@ -35,5 +36,5 @@ Ray GenerateRay(Camera camera, int pixelX, int pixelY)
 	Vector3 rayDirection = camera.position_ + Normalize(cameraCoordinates.column(0) * alpha
 		+ cameraCoordinates.column(1) * beta - cameraCoordinates.column(2));
 	
-	return Ray(camera.position_, rayDirection);
+	return Ray(camera.position_, Normalize(rayDirection));
 }

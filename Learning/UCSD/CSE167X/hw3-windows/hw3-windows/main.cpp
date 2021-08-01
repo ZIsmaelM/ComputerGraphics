@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 	
 	Sphere sphereList[1];
 	Triangle triangleList[1];
-	sphereList[0] = Sphere(Vector3(0.0f, 0.0f, -2.0f), 0.5f, Materials());
+	sphereList[0] = Sphere(Vector3(0.0f, 0.0f, -2.0f), 1.0f, Materials());
 	triangleList[0] = Triangle();
 	Scene scene = Scene(cam, sphereList, 1, triangleList, 0);
 

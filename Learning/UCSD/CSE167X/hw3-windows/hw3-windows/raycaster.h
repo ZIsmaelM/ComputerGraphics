@@ -12,5 +12,5 @@ public:
 	~Ray();
 };
 
-Matrix3 LookAt(Camera);
+Matrix3 LookAt(Camera, Vector3);
 Ray GenerateRay(Camera camera, int pixelX, int pixelY);
