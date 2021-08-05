@@ -10,6 +10,7 @@
 
 const int WIDTH = 100;
 const int HEIGHT = 100;
+const float ASPECTRATIO = WIDTH / HEIGHT;
 const float FOVX = 90.0f;
 const float FOVY = 90.0f;
 
@@ -38,6 +39,7 @@ int main(int argc, char* argv[])
 		{
 			// 1) get ray
 			Ray ray = GenerateRay(cam, i, j);
+			Vector3 foo = ray.direction_;
 			// 2) get intersection
 			Vector3 intersectPoint = FindIntersection(scene, ray);
 			Vector3 color = Vector3(0xFF, 0x00, 0x00);
