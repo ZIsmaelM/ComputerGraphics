@@ -14,8 +14,9 @@ public:
 	int numTriangles_;
 
 	Scene();
+	Scene(Camera, Sphere*, int);
 	Scene(Camera, Sphere*, int, Triangle*, int);
 	virtual ~Scene();
 };
 
-Vector3 FindIntersection(Scene, Ray);
+bool FindIntersection(Scene, Ray);

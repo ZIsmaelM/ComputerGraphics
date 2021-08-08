@@ -38,4 +38,4 @@ public:
 };
 
 Vector3 IntersectTriangle(Vector3, Triangle);
-float SphereIntersect(Ray, Sphere);
+bool SphereIntersect(Ray, Sphere);

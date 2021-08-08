@@ -6,6 +6,7 @@ class Ray
 public:
 	Vector3 origin_;
 	Vector3 direction_;
+	float intersectPoint = -1.0f;
 
 	Ray();
 	Ray(Vector3 orig, Vector3 dir);

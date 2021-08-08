@@ -1,4 +1,5 @@
 #include <cmath>
+#include <iostream>
 #include "geometry.h"
 
 Materials::Materials()
@@ -39,29 +40,32 @@ Sphere::Sphere(Vector3 center, float radius, Materials material)
 {}
 Sphere::~Sphere() {}
 
-float SphereIntersect(Ray ray, Sphere sphere)
+bool SphereIntersect(Ray ray, Sphere sphere)
 {
 	// quadratic equation
-	float a = Dot(ray.direction_, ray.direction_);
-	float b = 2 * Dot(ray.direction_, ray.origin_ - sphere.center_);
-	float c = Dot(ray.origin_ - sphere.center_, ray.origin_ - sphere.center_) - pow(sphere.radius_, 2);
+	Vector3 length = ray.origin_ - sphere.center_;
+	float a = Dot(ray.direction_, ray.direction_); // dot(x,x) == 1
+	float b = 2 * Dot(ray.direction_, length);
+	float c = Dot(length, length) - pow(sphere.radius_, 2);
 
 	float discriminant = pow(b,2) - 4 * a * c;
-	float t0 = (-b - sqrt(discriminant)) / (2 * a);
-	float t1 = (-b + sqrt(discriminant)) / (2 * a);
+	float s = b > 0 ? 1 : -1;
+	float t0 = (-b - s * sqrt(discriminant)) / (2 * a);
+	float t1 = c / a * t0;
 
+	//std::cout << "Discriminant: " << discriminant << std::endl;
 	// no intersection
 	if (discriminant < 0 || a == 0)
-		return -1;
+		return false;
 	// intersection is tangent
-	if (discriminant == 0)
-		return t0;
+	else if (discriminant == 0)
+		ray.intersectPoint = t0; // t0 should equal (-0.5 * b / a)
 	// return positive intersection
-	if (t0 < 0)
-		return t1;
-	if (t1 < 0)
-		return t0;
-	// both positive return minimum
-	return fmin(t0, t1);
+	else if (t0 > 0 && t1 > 0)
+		ray.intersectPoint = fmin(t0, t1);
+	else
+		ray.intersectPoint = fmax(t0, t1);
+
+	return true;
 }
 
