@@ -8,8 +8,8 @@
 #include "scene.h"
 #include "shader.h"
 
-const int WIDTH = 200;
-const int HEIGHT = 200;
+const int WIDTH = 100;
+const int HEIGHT = 100;
 const float ASPECTRATIO = WIDTH / (float)HEIGHT;
 const float FOVX = 90.0f;
 const float FOVY = 90.0f;
@@ -32,24 +32,23 @@ int main(int argc, char* argv[])
 
 	int numSamples = WIDTH * HEIGHT;
 	uint8_t* pixels = new uint8_t[3 * numSamples];
-	Camera cam = Camera(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 1.0f, 0.0f), FOVY);
-	
-	Sphere sphereList[1];
-	sphereList[0] = Sphere(Vector3(0.0f, 0.0f, 0.0f), 0.1f, Materials());
-	Scene scene = Scene(cam, sphereList, 1);
+	Vector3 upperLeft	= Vector3(-1, 1, -1);
+	Vector3 upperRight	= Vector3(1, 1, -1);
+	Vector3 lowerLeft	= Vector3(1, -1, -1);
+	Vector3 lowerRight	= Vector3(-1, -1, -1);
 
+	Scene scene = Scene(Vector3(0, 0, 0), upperLeft, upperRight, lowerLeft, lowerRight, WIDTH, HEIGHT);
+	Sphere mySphere = Sphere(Vector3(0, 0, -1), 1.f);
 
 	for (int i = 0; i < HEIGHT; i++)
 	{
 		for (int j = 0; j < WIDTH; j++)
 		{
 			// 1) get ray
-			Ray primaryRay = GenerateRay(cam, i, j);
-			Vector3 foo = primaryRay.direction_;
-			// 2) get intersection
+			Ray primaryRay = GenerateRay(scene.eyePosition_, j, i);
 			bool rayIntersected = FindIntersection(scene, primaryRay);
 			Vector3 color = Vector3(0x00, 0x00, 0x00);
-			if (rayIntersected)
+			if (SphereIntersect(primaryRay, mySphere))
 			{
 				color = Vector3(0x00, 0x00, 0xFF);
 			}

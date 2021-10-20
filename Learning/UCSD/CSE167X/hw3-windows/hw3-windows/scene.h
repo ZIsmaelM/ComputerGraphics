@@ -7,15 +7,15 @@
 class Scene
 {
 public:
-	Camera camera_;
-	Sphere* spheres_;
-	int numSpheres_;
-	Triangle* triangles_;
-	int numTriangles_;
+	Vector3 eyePosition_;
+	Vector3 imageUpperLeft;
+	Vector3 imageUpperRight;
+	Vector3 imageLowerLeft;
+	Vector3 imageLowerRight;
+	int imageHeight;
+	int imageWidth;
 
-	Scene();
-	Scene(Camera, Sphere*, int);
-	Scene(Camera, Sphere*, int, Triangle*, int);
+	Scene(Vector3 eyePos, Vector3 UL, Vector3 UR, Vector3 LL, Vector3 LR, int W, int H);
 	virtual ~Scene();
 };
 

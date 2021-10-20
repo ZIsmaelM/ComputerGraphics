@@ -33,7 +33,7 @@ public:
 	float radius_;
 
 	Sphere();
-	Sphere(Vector3, float, Materials);
+	Sphere(Vector3 center, float radius);
 	~Sphere();
 };
 

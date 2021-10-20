@@ -142,9 +142,20 @@ Vector3 Cross(Vector3 a, Vector3 b)
 	return Vector3(i, j, k);
 }
 
-float Dot(Vector3 a, Vector3 b)
+float dot(Vector3 a, Vector3 b)
 {
 	return a.x_ * b.x_ + a.y_ * b.y_ + a.z_ + b.z_;
+}
+
+Vector3 MultVecMat(Vector3 v, Matrix4 m)
+{
+	Vector3 result;
+	float a = v.x_ * m.mat_[0] + v.y_ * m.mat_[4] + v.z_ * m.mat_[8] + m.mat_[12];
+	float b = v.x_ * m.mat_[1] + v.y_ * m.mat_[5] + v.z_ * m.mat_[9] + m.mat_[13];
+	float c = v.x_ * m.mat_[2] + v.y_ * m.mat_[6] + v.z_ * m.mat_[10] + m.mat_[14];
+	float w = v.x_ * m.mat_[3] + v.y_ * m.mat_[7] + v.z_ * m.mat_[11] + m.mat_[15];
+
+	return Vector3(a / w, b / w, c / w);
 }
 
 Matrix3::Matrix3()
@@ -155,28 +166,28 @@ Matrix3::Matrix3(float f)
 	: mat_{ f,f,f,f,f,f,f,f,f }
 {}
 
-Matrix3::Matrix3(Vector3 column0, Vector3 column1, Vector3 column2)
+Matrix3::Matrix3(Vector3 row0, Vector3 row1, Vector3 row2)
 	: mat_{ 0.0f }
 {
-	mat_[0] = column0.x_;
-	mat_[1] = column0.y_;
-	mat_[2] = column0.z_;
-	mat_[3] = column1.x_;
-	mat_[4] = column1.y_;
-	mat_[5] = column1.z_;
-	mat_[6] = column2.x_;
-	mat_[7] = column2.y_;
-	mat_[8] = column2.z_;
+	mat_[0] = row0.x_;
+	mat_[1] = row0.y_;
+	mat_[2] = row0.z_;
+	mat_[3] = row1.x_;
+	mat_[4] = row1.y_;
+	mat_[5] = row1.z_;
+	mat_[6] = row2.x_;
+	mat_[7] = row2.y_;
+	mat_[8] = row2.z_;
 }
 
 Matrix3::~Matrix3() {}
 
-Vector3 Matrix3::row(int index)
+Vector3 Matrix3::column(int index)
 {
 	return Vector3(mat_[index], mat_[index + 3], mat_[index + 6]);
 }
 
-Vector3 Matrix3::column(int index)
+Vector3 Matrix3::row(int index)
 {
 	return Vector3(mat_[index*3], mat_[index*3 + 1], mat_[index*3 + 2]);
 }
@@ -207,10 +218,12 @@ Matrix3 operator*(Matrix3 m, float scalar)
 
 	return result;
 }
+
 Matrix3 operator*(float scalar, Matrix3 m)
 {
 	return m * scalar;
 }
+
 Matrix3 operator/(Matrix3 m, float scalar)
 {
 	return m * float(1 / scalar);
@@ -225,25 +238,25 @@ Matrix4::Matrix4(float f)
 	: mat_{ f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f }
 {}
 
-Matrix4::Matrix4(Vector4 column0, Vector4 column1, Vector4 column2, Vector4 column3)
+Matrix4::Matrix4(Vector4 row0, Vector4 row1, Vector4 row2, Vector4 row3)
 	: mat_{ 0.0f }
 {
-	mat_[0] = column0.x_;
-	mat_[1] = column0.y_;
-	mat_[2] = column0.z_;
-	mat_[3] = column0.w_;
-	mat_[4] = column1.x_;
-	mat_[5] = column1.y_;
-	mat_[6] = column1.z_;
-	mat_[7] = column1.w_;
-	mat_[8] = column2.x_;
-	mat_[9] = column2.y_;
-	mat_[10] = column2.z_;
-	mat_[11] = column2.w_;
-	mat_[12] = column3.x_;
-	mat_[13] = column3.y_;
-	mat_[14] = column3.z_;
-	mat_[15] = column3.w_;
+	mat_[0] = row0.x_;
+	mat_[1] = row0.y_;
+	mat_[2] = row0.z_;
+	mat_[3] = row0.w_;
+	mat_[4] = row1.x_;
+	mat_[5] = row1.y_;
+	mat_[6] = row1.z_;
+	mat_[7] = row1.w_;
+	mat_[8] = row2.x_;
+	mat_[9] = row2.y_;
+	mat_[10] = row2.z_;
+	mat_[11] = row2.w_;
+	mat_[12] = row3.x_;
+	mat_[13] = row3.y_;
+	mat_[14] = row3.z_;
+	mat_[15] = row3.w_;
 }
 
 Matrix4::Matrix4(Matrix3 m)
@@ -294,10 +307,12 @@ Matrix4 operator*(Matrix4 m, float scalar)
 
 	return result;
 }
+
 Matrix4 operator*(float scalar, Matrix4 m)
 {
 	return m * scalar;
 }
+
 Matrix4 operator/(Matrix4 m, float scalar)
 {
 	return m * float(1 / scalar);

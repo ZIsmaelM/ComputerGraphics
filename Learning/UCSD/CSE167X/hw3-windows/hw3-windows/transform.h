@@ -38,7 +38,7 @@ public:
 Vector3 Normalize(Vector3);
 Vector4 Normalize(Vector4);
 Vector3 Cross(Vector3, Vector3);
-float Dot(Vector3, Vector3);
+float dot(Vector3, Vector3);
 
 // Note: Matrices use column major order
 class Matrix3
@@ -81,5 +81,6 @@ public:
 Matrix4 Translate(float, float, float);
 Matrix3 Rotate(Vector3, float);
 Matrix4 Scale(float, float, float);
+Vector3 MultVecMat(Vector3, Matrix4);
 
 float ToRadians(float);
