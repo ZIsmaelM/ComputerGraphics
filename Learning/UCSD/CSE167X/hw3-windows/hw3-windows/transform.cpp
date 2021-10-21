@@ -142,7 +142,7 @@ Vector3 Cross(Vector3 a, Vector3 b)
 	return Vector3(i, j, k);
 }
 
-float dot(Vector3 a, Vector3 b)
+float Dot(Vector3 a, Vector3 b)
 {
 	return a.x_ * b.x_ + a.y_ * b.y_ + a.z_ + b.z_;
 }

@@ -8,8 +8,8 @@
 #include "scene.h"
 #include "shader.h"
 
-const int WIDTH = 100;
-const int HEIGHT = 100;
+const int WIDTH = 10;
+const int HEIGHT = 10;
 const float ASPECTRATIO = WIDTH / (float)HEIGHT;
 const float FOVX = 90.0f;
 const float FOVY = 90.0f;
@@ -39,6 +39,7 @@ int main(int argc, char* argv[])
 
 	Scene scene = Scene(Vector3(0, 0, 0), upperLeft, upperRight, lowerLeft, lowerRight, WIDTH, HEIGHT);
 	Sphere mySphere = Sphere(Vector3(0, 0, -1), 1.f);
+	Triangle myTriangle = Triangle(Vector3(-0.5, -0.5, -3), Vector3(0, 0.5, -3), Vector3(0.5, -0.5, -3));
 
 	for (int i = 0; i < HEIGHT; i++)
 	{
@@ -47,8 +48,9 @@ int main(int argc, char* argv[])
 			// 1) get ray
 			Ray primaryRay = GenerateRay(scene.eyePosition_, j, i);
 			bool rayIntersected = FindIntersection(scene, primaryRay);
-			Vector3 color = Vector3(0x00, 0x00, 0x00);
-			if (SphereIntersect(primaryRay, mySphere))
+			Vector3 color = Vector3(0xFF, 0xFF, 0xFF);
+			//if (SphereIntersect(primaryRay, mySphere))
+			if (TriangleIntersect(primaryRay, myTriangle))
 			{
 				color = Vector3(0x00, 0x00, 0xFF);
 			}

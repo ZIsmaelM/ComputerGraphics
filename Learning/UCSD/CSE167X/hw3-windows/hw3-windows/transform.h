@@ -38,7 +38,7 @@ public:
 Vector3 Normalize(Vector3);
 Vector4 Normalize(Vector4);
 Vector3 Cross(Vector3, Vector3);
-float dot(Vector3, Vector3);
+float Dot(Vector3, Vector3);
 
 // Note: Matrices use column major order
 class Matrix3

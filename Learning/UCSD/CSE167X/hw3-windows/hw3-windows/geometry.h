@@ -37,5 +37,5 @@ public:
 	~Sphere();
 };
 
-Vector3 IntersectTriangle(Vector3, Triangle);
+bool TriangleIntersect(Ray, Triangle);
 bool SphereIntersect(Ray, Sphere);
