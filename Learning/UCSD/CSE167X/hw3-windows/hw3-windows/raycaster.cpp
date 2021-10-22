@@ -29,6 +29,9 @@ Matrix4 LookAt(Vector3 eyePos, Vector3 point)
 int gar = 0;
 Ray GenerateRay(Vector3 eyePos, int pixelX, int pixelY)
 {
+	Matrix4 CameraToWorld = LookAt(Vector3(), eyePos);
+	eyePos = MultVecMat(eyePos, CameraToWorld);
+
 	// convert to NDC space
 	float pixelNDCX = (pixelX + 0.5f) / (float)WIDTH;
 	float pixelNDCY = (pixelY + 0.5f) / (float)HEIGHT;
@@ -42,7 +45,7 @@ Ray GenerateRay(Vector3 eyePos, int pixelX, int pixelY)
 	float pixelCameraY = pixelScreenY * tan(ToRadians(FOVY * 0.5f));
 
 	Vector3 direction = Vector3(pixelCameraX, pixelCameraY, -1.0f) - eyePos;
-	Matrix4 CameraToWorld = LookAt(eyePos, direction);
+	CameraToWorld = LookAt(eyePos, direction);
 	direction = MultVecMat(direction, CameraToWorld);
 	Normalize(direction);
 

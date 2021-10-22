@@ -38,4 +38,5 @@ public:
 };
 
 bool TriangleIntersect(Ray, Triangle);
+bool rayTriangleIntersect(Ray, Triangle);
 bool SphereIntersect(Ray, Sphere);
