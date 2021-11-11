@@ -50,6 +50,8 @@ bool hittable_list::bounding_box(double time0, double time1, aabb& output_box) c
 {
     if (objects.empty())
         return false;
+    
+    aabb temp_box;
     bool first_box = true;
 
     for (const auto& object : objects)
