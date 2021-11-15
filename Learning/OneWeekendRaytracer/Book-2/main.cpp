@@ -62,6 +62,17 @@ hittable_list book_cover_scene()
     return world;
 }
 
+hittable_list two_spheres()
+{
+    hittable_list objects;
+
+    auto checker = make_shared<checker_texture>(color(0.2, 0.3, 0.1), color(0.9, 0.9, 0.9));
+    objects.add(make_shared<sphere>(point3(0, -10, 0), 10, make_shared<lambertian>(checker)));
+    objects.add(make_shared<sphere>(point3(0, 10, 0), 10, make_shared<lambertian>(checker)));
+
+    return objects;
+}
+
 color ray_color(const ray& r, const hittable& world, int depth)
 {
     hit_record rec;
@@ -93,17 +104,38 @@ int main()
     const int max_depth = 50;
 
     // World
-    auto world = book_cover_scene();
+    hittable_list world;
+
+    point3 lookfrom;
+    point3 lookat;
+    auto vfov = 40.0;
+    auto aperture = 0.0;
+
+    switch (0)
+    {
+        case 1:
+            world = book_cover_scene();
+            lookfrom = point3(13,2,3);
+            lookat = point3(0,0,0);
+            vfov = 20.0; // zoom
+            aperture = 0.1;
+            break;
+        
+        default:
+        case 2:
+            world = two_spheres();
+            lookfrom = point3(13,2,3);
+            lookat = point3(0,0,0);
+            vfov = 20.0;
+            break;
+    }
 
     // Camera
-    point3 lookfrom(13,2,3);
-    point3 lookat(0,0,0);
     vec3 vup(0,1,0);
     auto dist_to_focus = 10.0;
-    auto aperture = 0.1;
-    auto zoom = 20;
+    int image_heignt = static_cast<int>(image_width / aspect_ratio);
 
-    camera cam(lookfrom, lookat, vup, zoom, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
+    camera cam(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
 
     // Render
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
