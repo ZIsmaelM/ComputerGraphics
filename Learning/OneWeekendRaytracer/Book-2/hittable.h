@@ -136,10 +136,10 @@ bool rotate_y::hit(const ray& r, double t_min, double t_max, hit_record& rec) co
     auto direction = r.direction();
 
     origin[0] = cos_theta*r.origin()[0] - sin_theta*r.origin()[2];
-    origin[2] = sin_theta*r.origin()[0] - cos_theta*r.origin()[2];
+    origin[2] = sin_theta*r.origin()[0] + cos_theta*r.origin()[2];
 
     direction[0] = cos_theta*r.direction()[0] - sin_theta*r.direction()[2];
-    direction[2] = sin_theta*r.direction()[0] - cos_theta*r.direction()[2];
+    direction[2] = sin_theta*r.direction()[0] + cos_theta*r.direction()[2];
 
     ray rotated_r(origin, direction, r.time());
 
