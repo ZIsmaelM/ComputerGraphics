@@ -47,10 +47,10 @@ int main(int argc, char* argv[])
 		{
 			// 1) get ray
 			Ray primaryRay = GenerateRay(scene.eyePosition_, j, i);
-			bool rayIntersected = FindIntersection(scene, primaryRay);
+			//bool rayIntersected = FindIntersection(scene, primaryRay);
 			Vector3 color = Vector3(0xFF, 0xFF, 0xFF);
-			//if (SphereIntersect(primaryRay, mySphere))
-			if (rayTriangleIntersect(primaryRay, myTriangle))
+			if (SphereIntersect(primaryRay, mySphere))
+			//if (rayTriangleIntersect(primaryRay, myTriangle))
 			{
 				color = Vector3(0x00, 0x00, 0xFF);
 			}
