@@ -2,11 +2,11 @@
 
 #include <glm/glm.hpp>
 
-class ray
+class Ray
 {
 public:
-    ray() {}
-    ray(const glm::vec3& origin, const glm::vec3& direction)
+    Ray() {}
+    Ray(const glm::vec3& origin, const glm::vec3& direction)
         : origin(origin), direction(direction)
     {}
 

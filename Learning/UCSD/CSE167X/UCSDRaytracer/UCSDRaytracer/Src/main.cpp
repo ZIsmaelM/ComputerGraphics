@@ -31,6 +31,19 @@ void SaveImage(std::string fname, uint8_t* pixels, int width, int height)
 	FreeImage_Save(FIF_PNG, image, fname.c_str(), 0);
 }
 
+bool sphereIntersect(Ray r, glm::vec3 center, float radius)
+{
+	glm::vec3 originToCenter = r.origin - center;
+
+	float a = glm::dot(r.direction, r.direction);
+	float b = 2.0 * glm::dot(r.direction, originToCenter);
+	float c = glm::dot(originToCenter, originToCenter) - radius * radius;
+	float discriminant = b * b - 4 * a * c;
+
+	if (discriminant < 0) return false;
+
+	return true;
+}
 
 int main()
 {
@@ -38,12 +51,14 @@ int main()
 	FreeImage_Initialise();
 
 	// Image
-	int width = 100;
-	int height = 100;
+	int width = 300;
+	int height = 300;
 	float aspectratio = width / (float)height;
 	int samplesPerPixel = 1;
 	const int maxDepth = 1;
-	uint8_t* pixels = new uint8_t[3 * (uint8_t)width * (uint8_t)height];
+	// VS really hates this line but my fix breaks the code
+	// ....so we'll figure it out later :p
+	uint8_t* pixels = new uint8_t[3 * width * height]; 
 
 	// World
 	glm::vec3 lookFrom(0,0,1);
@@ -67,12 +82,15 @@ int main()
 				float v = j / (float)(height - 1);
 				
 				// Get ray
-				ray r = cam.get_ray(u, v);
+				Ray r = cam.get_ray(u, v);
 				// Test hit
 				bool hit = false;
 				glm::vec3 newColor(0x00,0x00,0xFF);
 				// Get color
-				if (i % 5 == 0)
+				glm::vec3 sCenter(0, 0, 0);
+				float sRadius = 0.5;
+
+				if (sphereIntersect(r, sCenter, sRadius))
 					color = newColor;
 
 				color += color;

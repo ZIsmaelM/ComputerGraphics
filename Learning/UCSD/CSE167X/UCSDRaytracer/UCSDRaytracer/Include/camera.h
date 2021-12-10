@@ -30,9 +30,9 @@ public:
         lower_left_corner = origin - horizontal * 0.5f - vertical * 0.5f - w;
     }
 
-    ray get_ray(float s, float t) const
+    Ray get_ray(float s, float t) const
     {
-        return ray(
+        return Ray(
             origin,
             lower_left_corner + s * horizontal + t * vertical - origin);
     }
