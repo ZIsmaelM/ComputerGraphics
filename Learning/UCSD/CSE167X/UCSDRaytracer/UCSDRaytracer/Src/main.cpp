@@ -17,8 +17,8 @@
 void ColorPixel(uint8_t* pixels, int index, glm::vec3 color)
 {
 	pixels[index] = (uint8_t)color.z; // Red
-	pixels[index + 1] = (uint8_t)color.x; // Green
-	pixels[index + 2] = (uint8_t)color.y; // Blue
+	pixels[index + 1] = (uint8_t)color.y; // Green
+	pixels[index + 2] = (uint8_t)color.x; // Blue
 }
 
 void SaveImage(std::string fname, uint8_t* pixels, int width, int height)
@@ -31,7 +31,7 @@ void SaveImage(std::string fname, uint8_t* pixels, int width, int height)
 	FreeImage_Save(FIF_PNG, image, fname.c_str(), 0);
 }
 
-bool sphereIntersect(Ray r, glm::vec3 center, float radius)
+float sphereIntersect(Ray r, glm::vec3 center, float radius)
 {
 	glm::vec3 originToCenter = r.origin - center;
 
@@ -40,9 +40,15 @@ bool sphereIntersect(Ray r, glm::vec3 center, float radius)
 	float c = glm::dot(originToCenter, originToCenter) - radius * radius;
 	float discriminant = b * b - 4 * a * c;
 
-	if (discriminant < 0) return false;
-
-	return true;
+	if (discriminant < 0)
+	{
+		return -1.0;
+	}
+	else
+	{
+		// sphere hit point
+		return (-b - sqrt(discriminant)) / (2.0 * a);
+	}
 }
 
 int main()
@@ -85,12 +91,12 @@ int main()
 				Ray r = cam.get_ray(u, v);
 				// Test hit
 				bool hit = false;
-				glm::vec3 newColor(0x00,0x00,0xFF);
+				glm::vec3 newColor(0xFF,0x00,0x00);
 				// Get color
 				glm::vec3 sCenter(0, 0, 0);
 				float sRadius = 0.5;
 
-				if (sphereIntersect(r, sCenter, sRadius))
+				if (sphereIntersect(r, sCenter, sRadius) > 0)
 					color = newColor;
 
 				color += color;
