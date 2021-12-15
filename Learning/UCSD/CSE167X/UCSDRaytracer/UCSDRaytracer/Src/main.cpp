@@ -122,7 +122,7 @@ int main()
 					color = newColor;
 				*/
 
-				// TRIANGLE INTERSECTION
+				// TRIANGLE INTERSECTION (Y, X, Z)
 				glm::vec3 vertexA(-1, -1, -1);
 				glm::vec3 vertexB(1, -1, -1);
 				glm::vec3 vertexC(0, 1, -1);
@@ -133,7 +133,7 @@ int main()
 			}
 
 			// set pixel color
-			int pixelIndex = (i * width * 3) + j * 3;
+			int pixelIndex = (j * width * 3) + i * 3;
 			ColorPixel(pixels, pixelIndex, color);
 		}
 	}
