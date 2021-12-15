@@ -51,6 +51,27 @@ float sphereIntersect(Ray r, glm::vec3 center, float radius)
 	}
 }
 
+float triangleIntersect(Ray ray, glm::vec3 vertexA, glm::vec3 vertexB, glm::vec3 vertexC)
+{
+	glm::vec3 edge0 = vertexB - vertexA;
+	glm::vec3 edge1 = vertexC - vertexA;
+	glm::vec3 normal = cross(edge0, edge1);
+	normalize(normal);
+
+	float intersectionDistance = (dot(normal, vertexA) - dot(normal, ray.origin)) 
+								/ dot(normal, ray.direction);
+	
+	glm::vec3 intersectionPoint = ray.origin + ray.direction * intersectionDistance;
+	glm::vec3 edgeA = cross(vertexB - vertexA, intersectionPoint - vertexA);
+	glm::vec3 edgeB = cross(vertexC - vertexB, intersectionPoint - vertexB);
+	glm::vec3 edgeC = cross(vertexA - vertexC, intersectionPoint - vertexC);
+
+	if (dot(edgeA, normal) < 0 || dot(edgeB, normal) < 0 || dot(edgeC, normal) < 0)
+		return -1.0;
+	else
+		return intersectionDistance;
+}
+
 int main()
 {
 	// Initialization
@@ -93,10 +114,19 @@ int main()
 				bool hit = false;
 				glm::vec3 newColor(0xFF,0x00,0x00);
 				// Get color
+
+				/* SPHERE INTERSECTION
 				glm::vec3 sCenter(0, 0, 0);
 				float sRadius = 0.5;
-
 				if (sphereIntersect(r, sCenter, sRadius) > 0)
+					color = newColor;
+				*/
+
+				// TRIANGLE INTERSECTION
+				glm::vec3 vertexA(-1, -1, -1);
+				glm::vec3 vertexB(1, -1, -1);
+				glm::vec3 vertexC(0, 1, -1);
+				if (triangleIntersect(r, vertexA, vertexB, vertexC) > 0)
 					color = newColor;
 
 				color += color;
