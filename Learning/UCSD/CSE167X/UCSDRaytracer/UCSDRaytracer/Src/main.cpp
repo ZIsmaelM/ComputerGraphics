@@ -10,15 +10,18 @@
 #include <glm/glm.hpp>
 #include <freeglut.h>
 
+
 #include "FreeImage.h"
 #include "camera.h"
 #include "ray.h"
+#include "shape.h"
+#include "hittable.h"
 
 void ColorPixel(uint8_t* pixels, int index, glm::vec3 color)
 {
-	pixels[index] = (uint8_t)color.z; // Red
-	pixels[index + 1] = (uint8_t)color.y; // Green
-	pixels[index + 2] = (uint8_t)color.x; // Blue
+	pixels[index] = (uint8_t)color.z;		// Red
+	pixels[index + 1] = (uint8_t)color.y;	// Green
+	pixels[index + 2] = (uint8_t)color.x;	// Blue
 }
 
 void SaveImage(std::string fname, uint8_t* pixels, int width, int height)
@@ -31,45 +34,30 @@ void SaveImage(std::string fname, uint8_t* pixels, int width, int height)
 	FreeImage_Save(FIF_PNG, image, fname.c_str(), 0);
 }
 
-float sphereIntersect(Ray r, glm::vec3 center, float radius)
+vec3 getPixelColor(Ray ray, HittableList world, int depth)
 {
-	glm::vec3 originToCenter = r.origin - center;
+	vec3 backgroundColor(0, 0, 0);
+	if (depth <= 0) return backgroundColor;
 
-	float a = glm::dot(r.direction, r.direction);
-	float b = 2.0 * glm::dot(r.direction, originToCenter);
-	float c = glm::dot(originToCenter, originToCenter) - radius * radius;
-	float discriminant = b * b - 4 * a * c;
+	HitRecord record;
+	float minHitDistance = 0.0001;
+	float maxHitDistance = INFINITE;
+	if (world.hit(ray, minHitDistance, maxHitDistance, record))
+	{
+		vec3 objectColor(0xFF,0x00,0x00);
+		return objectColor;
+	}
 
-	if (discriminant < 0)
-	{
-		return -1.0;
-	}
-	else
-	{
-		// sphere hit point
-		return (-b - sqrt(discriminant)) / (2.0 * a);
-	}
+	return backgroundColor;
 }
 
-float triangleIntersect(Ray ray, glm::vec3 vertexA, glm::vec3 vertexB, glm::vec3 vertexC)
+HittableList scene()
 {
-	glm::vec3 edge0 = vertexB - vertexA;
-	glm::vec3 edge1 = vertexC - vertexA;
-	glm::vec3 normal = cross(edge0, edge1);
-	normalize(normal);
+	HittableList world;
+	world.add(make_shared<Sphere>(vec3(0, 0.75, -1), 0.75));
+	world.add(make_shared<Triangle>(vec3(-1, -2, -1), vec3(1, -2, -1), vec3(0, 0, -1)));
 
-	float intersectionDistance = (dot(normal, vertexA) - dot(normal, ray.origin)) 
-								/ dot(normal, ray.direction);
-	
-	glm::vec3 intersectionPoint = ray.origin + ray.direction * intersectionDistance;
-	glm::vec3 edgeA = cross(vertexB - vertexA, intersectionPoint - vertexA);
-	glm::vec3 edgeB = cross(vertexC - vertexB, intersectionPoint - vertexB);
-	glm::vec3 edgeC = cross(vertexA - vertexC, intersectionPoint - vertexC);
-
-	if (dot(edgeA, normal) < 0 || dot(edgeB, normal) < 0 || dot(edgeC, normal) < 0)
-		return -1.0;
-	else
-		return intersectionDistance;
+	return world;
 }
 
 int main()
@@ -92,6 +80,7 @@ int main()
 	glm::vec3 lookAt(0,0,0);
 	float fov = 90;
 	glm::vec3 backgroundColor(0, 0, 0);
+	HittableList world = scene();
 
 	// Camera
 	glm::vec3 up(0, 1, 0);
@@ -109,27 +98,11 @@ int main()
 				float v = j / (float)(height - 1);
 				
 				// Get ray
-				Ray r = cam.get_ray(u, v);
+				Ray ray = cam.get_ray(u, v);
+
 				// Test hit
-				bool hit = false;
-				glm::vec3 newColor(0xFF,0x00,0x00);
-				// Get color
-
-				/* SPHERE INTERSECTION
-				glm::vec3 sCenter(0, 0, 0);
-				float sRadius = 0.5;
-				if (sphereIntersect(r, sCenter, sRadius) > 0)
-					color = newColor;
-				*/
-
-				// TRIANGLE INTERSECTION (Y, X, Z)
-				glm::vec3 vertexA(-1, -1, -1);
-				glm::vec3 vertexB(1, -1, -1);
-				glm::vec3 vertexC(0, 1, -1);
-				if (triangleIntersect(r, vertexA, vertexB, vertexC) > 0)
-					color = newColor;
-
-				color += color;
+				vec3 newColor = getPixelColor(ray, world, maxDepth);
+				color = newColor;
 			}
 
 			// set pixel color
