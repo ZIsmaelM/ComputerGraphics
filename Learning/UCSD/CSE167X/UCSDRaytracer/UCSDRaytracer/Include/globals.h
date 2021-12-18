@@ -5,6 +5,7 @@
 #include <vector>
 
 using glm::vec3;
+using glm::mat4;
 using glm::dot;
 using std::shared_ptr;
 using std::make_shared;

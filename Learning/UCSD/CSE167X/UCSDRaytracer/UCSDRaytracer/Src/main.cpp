@@ -16,6 +16,8 @@
 #include "ray.h"
 #include "shape.h"
 #include "hittable.h"
+#include "Transform.h"
+#include "readfile.h"
 
 void ColorPixel(uint8_t* pixels, int index, glm::vec3 color)
 {
@@ -54,16 +56,22 @@ vec3 getPixelColor(Ray ray, HittableList world, int depth)
 HittableList scene()
 {
 	HittableList world;
-	world.add(make_shared<Sphere>(vec3(0, 0.75, -1), 0.75));
-	world.add(make_shared<Triangle>(vec3(-1, -2, -1), vec3(1, -2, -1), vec3(0, 0, -1)));
+	Sphere foo(vec3(0, 0.75, -1), 0.75);
+	Triangle boo(vec3(-1, -2, -1), vec3(1, -2, -1), vec3(0, 0, -1));
+	auto b = foo.transform;
+
+	world.add(make_shared<Sphere>(foo));
+	world.add(make_shared<Triangle>(boo));
 
 	return world;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
 	// Initialization
 	FreeImage_Initialise();
+
+	readfile(argv[1]);
 
 	// Image
 	int width = 300;
@@ -99,6 +107,7 @@ int main()
 				
 				// Get ray
 				Ray ray = cam.get_ray(u, v);
+
 
 				// Test hit
 				vec3 newColor = getPixelColor(ray, world, maxDepth);

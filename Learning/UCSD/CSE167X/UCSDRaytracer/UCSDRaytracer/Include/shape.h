@@ -17,7 +17,7 @@ public:
 public:
 	glm::vec3 center;
 	float radius;
-
+	mat4 transform = mat4(1.0);
 };
 
 bool Sphere::hit(const Ray& ray, float minDistance, float maxDistance, HitRecord& rec) const
@@ -46,7 +46,7 @@ bool Sphere::hit(const Ray& ray, float minDistance, float maxDistance, HitRecord
 	return true;
 }
 
-class Triangle : public HittableList
+class Triangle : public Hittable
 {
 public:
 	Triangle(glm::vec3 vertexA, glm::vec3 vertexB, glm::vec3 vertexC)
@@ -59,6 +59,7 @@ public:
 	glm::vec3 vertexA;
 	glm::vec3 vertexB;
 	glm::vec3 vertexC;
+	mat4 transform = mat4(1.0);
 };
 
 bool Triangle::hit(const Ray& ray, float minDistance, float maxDistance, HitRecord& rec) const
