@@ -52,16 +52,16 @@ bool readvals(stringstream &s, const int numvals, GLfloat* values)
         s >> values[i]; 
         if (s.fail()) {
             cout << "Failed reading value " << i << " will skip\n";
-            cout << "First value was: " << values[0] << endl;
             return false;
         }
     }
     return true; 
 }
 
-void readfile(const char* filename) 
+
+void readfile(const char* filename, Image image) 
 {
-    string str, cmd; 
+    string str, cmd;
     ifstream in;
     in.open(filename);
     std::cout << "Opening file: " << filename << std::endl;
@@ -84,9 +84,24 @@ void readfile(const char* filename)
                                     // Up to 10 params for cameras.  
                 bool validinput; // Validity of input 
 
+                if (cmd == "size") {
+                    validinput = readvals(s, 2, values);
+                    if (validinput) {
+                        image.width = (int)values[0];
+                        image.height = (int)values[1];
+                        image.aspectRatio = image.width / (float)image.height;
+                    }
+                }
+                else if (cmd == "output") {}
+                else if (cmd == "camera") {
+                    validinput = readvals(s, 10, values); // 10 values eye cen up fov
+                    if (validinput) {
+
+                    }
+                }
                 // Process the light, add it to database.
                 // Lighting Command
-                if (cmd == "light") {
+                else if (cmd == "light") {
                     //if (numused == numLights) { // No more Lights 
                     //    cerr << "Reached Maximum Number of Lights " << numused << " Will ignore further lights\n";
                     //} else {
@@ -118,30 +133,30 @@ void readfile(const char* filename)
                 // Note that no transforms/stacks are applied to the colors. 
 
                 else if (cmd == "ambient") {
-                    validinput = readvals(s, 4, values); // colors 
+                    validinput = readvals(s, 3, values); // colors 
                     if (validinput) {
-                        for (i = 0; i < 4; i++) {
+                        for (i = 0; i < 3; i++) {
                             //ambient[i] = values[i]; 
                         }
                     }
                 } else if (cmd == "diffuse") {
-                    validinput = readvals(s, 4, values); 
+                    validinput = readvals(s, 3, values); 
                     if (validinput) {
-                        for (i = 0; i < 4; i++) {
+                        for (i = 0; i < 3; i++) {
                             //diffuse[i] = values[i]; 
                         }
                     }
                 } else if (cmd == "specular") {
-                    validinput = readvals(s, 4, values); 
+                    validinput = readvals(s, 3, values); 
                     if (validinput) {
-                        for (i = 0; i < 4; i++) {
+                        for (i = 0; i < 3; i++) {
                             //specular[i] = values[i]; 
                         }
                     }
                 } else if (cmd == "emission") {
-                    validinput = readvals(s, 4, values); 
+                    validinput = readvals(s, 3, values); 
                     if (validinput) {
-                        for (i = 0; i < 4; i++) {
+                        for (i = 0; i < 3; i++) {
                             //emission[i] = values[i]; 
                         }
                     }
@@ -150,17 +165,7 @@ void readfile(const char* filename)
                     if (validinput) {
                         //shininess = values[0]; 
                     }
-                } else if (cmd == "size") {
-                    validinput = readvals(s,2,values); 
-                    if (validinput) { 
-                        //w = (int) values[0]; h = (int) values[1]; 
-                    } 
-                } else if (cmd == "camera") {
-                    validinput = readvals(s,10,values); // 10 values eye cen up fov
-                    if (validinput) {
-
-                    }
-                }
+                } 
 
                 // I've left the code for loading objects in the skeleton, so 
                 // you can get a sense of how this works.  
@@ -232,11 +237,10 @@ void readfile(const char* filename)
                     }
                 }
 
-                else if (cmd == "maxDepth") {}
-                else if (cmd == "output") {}
-                else if (cmd == "directional") {}
+                //else if (cmd == "maxDepth") {}
+                //else if (cmd == "directional") {}
                 else if (cmd == "point") {}
-                else if (cmd == "attenuation") {}
+                //else if (cmd == "attenuation") {}
                 else if (cmd == "maxverts") {}
                 else if (cmd == "vertex") {}
                 else if (cmd == "tri") {}

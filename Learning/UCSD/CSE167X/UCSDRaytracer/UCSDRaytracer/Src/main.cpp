@@ -18,6 +18,7 @@
 #include "hittable.h"
 #include "Transform.h"
 #include "readfile.h"
+#include "image.h"
 
 void ColorPixel(uint8_t* pixels, int index, glm::vec3 color)
 {
@@ -26,14 +27,14 @@ void ColorPixel(uint8_t* pixels, int index, glm::vec3 color)
 	pixels[index + 2] = (uint8_t)color.x;	// Blue
 }
 
-void SaveImage(std::string fname, uint8_t* pixels, int width, int height)
+void SaveImage(Image image)
 {
-	int bytesPerRow = width * 3;
+	int bytesPerRow = image.width * 3;
 	int bitsPerPixel = 24;
 
-	FIBITMAP* image = FreeImage_ConvertFromRawBits(pixels, width, height
+	FIBITMAP* imageData = FreeImage_ConvertFromRawBits(image.pixels, image.width, image.height
 		, bytesPerRow, bitsPerPixel, 0xFF0000, 0x00FF00, 0x0000FF, false);
-	FreeImage_Save(FIF_PNG, image, fname.c_str(), 0);
+	FreeImage_Save(FIF_PNG, imageData, image.name.c_str(), 0);
 }
 
 vec3 getPixelColor(Ray ray, HittableList world, int depth)
@@ -71,17 +72,13 @@ int main(int argc, char* argv[])
 	// Initialization
 	FreeImage_Initialise();
 
-	readfile(argv[1]);
-
 	// Image
-	int width = 300;
-	int height = 300;
-	float aspectratio = width / (float)height;
-	int samplesPerPixel = 1;
-	const int maxDepth = 1;
+	Image image = Image("test_image.png", 300, 300, 300 / (float)300, 1, 1);
 	// VS really hates this line but my fix breaks the code
 	// ....so we'll figure it out later :p
-	uint8_t* pixels = new uint8_t[3 * width * height]; 
+	//image.pixels = new uint8_t[3 * image.width * image.height];
+
+	readfile(argv[1], image);
 
 	// World
 	glm::vec3 lookFrom(0,0,1);
@@ -92,35 +89,35 @@ int main(int argc, char* argv[])
 
 	// Camera
 	glm::vec3 up(0, 1, 0);
-	camera cam(lookFrom, lookAt, up, fov, aspectratio);
+	camera cam(lookFrom, lookAt, up, fov, image.aspectRatio);
 
-	for (int j = height - 1; j >= 0; --j)
+	for (int j = image.height - 1; j >= 0; --j)
 	{
-		for (int i = 0; i < width; ++i)
+		for (int i = 0; i < image.width; ++i)
 		{
 			glm::vec3 color(0x00, 0x00, 0x00);
 
-			for (int s = 0; s < samplesPerPixel; ++s)
+			for (int s = 0; s < image.samplesPerPixel; ++s)
 			{
-				float u = i / (float)(width - 1);
-				float v = j / (float)(height - 1);
+				float u = i / (float)(image.width - 1);
+				float v = j / (float)(image.height - 1);
 				
 				// Get ray
 				Ray ray = cam.get_ray(u, v);
 
 
 				// Test hit
-				vec3 newColor = getPixelColor(ray, world, maxDepth);
+				vec3 newColor = getPixelColor(ray, world, image.maxDepth);
 				color = newColor;
 			}
 
 			// set pixel color
-			int pixelIndex = (j * width * 3) + i * 3;
-			ColorPixel(pixels, pixelIndex, color);
+			int pixelIndex = (j * image.width * 3) + i * 3;
+			ColorPixel(image.pixels, pixelIndex, color);
 		}
 	}
-	SaveImage("test_image.png", pixels, width, height);
-	delete[] pixels;
+	SaveImage(image);
+	delete[] image.pixels;
 
 	FreeImage_DeInitialise();
 
