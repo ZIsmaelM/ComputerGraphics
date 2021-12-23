@@ -45,13 +45,14 @@ void rightmultiply(const mat4 & M, stack<mat4> &transfstack)
 }
 
 // Function to read the input data values
-// Use is optional, but should be very helpful in parsing.  
+// Use is optional, but should be very helpful in parsing.
+string cmd;
 bool readvals(stringstream &s, const int numvals, GLfloat* values) 
 {
     for (int i = 0; i < numvals; i++) {
         s >> values[i]; 
         if (s.fail()) {
-            cout << "Failed reading value " << i << " will skip\n";
+            cout << "Failed reading value " << i << " for command " << cmd << ". will skip\n";
             return false;
         }
     }
@@ -59,9 +60,9 @@ bool readvals(stringstream &s, const int numvals, GLfloat* values)
 }
 
 
-void readfile(const char* filename, Image image) 
+void readfile(const char* filename, Image& image) 
 {
-    string str, cmd;
+    string str;// , cmd;
     ifstream in;
     in.open(filename);
     std::cout << "Opening file: " << filename << std::endl;
@@ -90,9 +91,19 @@ void readfile(const char* filename, Image image)
                         image.width = (int)values[0];
                         image.height = (int)values[1];
                         image.aspectRatio = image.width / (float)image.height;
+
+                        delete[] image.pixels;
+                        image.pixels = new uint8_t[3 * image.width * image.height];
                     }
                 }
-                else if (cmd == "output") {}
+                else if (cmd == "output") {
+                    if (s.fail()) {
+                        cout << "Failed reading output file name. Saving as test.png" << endl;
+                    }
+                    else {
+                        s >> image.name;
+                    }
+                }
                 else if (cmd == "camera") {
                     validinput = readvals(s, 10, values); // 10 values eye cen up fov
                     if (validinput) {

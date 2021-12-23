@@ -10,7 +10,6 @@
 #include <glm/glm.hpp>
 #include <freeglut.h>
 
-
 #include "FreeImage.h"
 #include "camera.h"
 #include "ray.h"
@@ -20,11 +19,11 @@
 #include "readfile.h"
 #include "image.h"
 
-void ColorPixel(uint8_t* pixels, int index, glm::vec3 color)
+void ColorPixel(Image image, int index, glm::vec3 color)
 {
-	pixels[index] = (uint8_t)color.z;		// Red
-	pixels[index + 1] = (uint8_t)color.y;	// Green
-	pixels[index + 2] = (uint8_t)color.x;	// Blue
+	image.pixels[index] = (uint8_t)color.z;		// Red
+	image.pixels[index + 1] = (uint8_t)color.y;	// Green
+	image.pixels[index + 2] = (uint8_t)color.x;	// Blue
 }
 
 void SaveImage(Image image)
@@ -73,7 +72,7 @@ int main(int argc, char* argv[])
 	FreeImage_Initialise();
 
 	// Image
-	Image image = Image("test_image.png", 300, 300, 300 / (float)300, 1, 1);
+	Image image = Image("test.png", 300, 300, 300 / (float)300, 1, 1);
 	// VS really hates this line but my fix breaks the code
 	// ....so we'll figure it out later :p
 	//image.pixels = new uint8_t[3 * image.width * image.height];
@@ -113,7 +112,7 @@ int main(int argc, char* argv[])
 
 			// set pixel color
 			int pixelIndex = (j * image.width * 3) + i * 3;
-			ColorPixel(image.pixels, pixelIndex, color);
+			ColorPixel(image, pixelIndex, color);
 		}
 	}
 	SaveImage(image);

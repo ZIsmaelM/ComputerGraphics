@@ -8,7 +8,7 @@ public:
 	{
 		pixels = new uint8_t[3 * width * height];
 	};
-
+	void rename(std::string name) { name = name; }
 	virtual ~Image() {};
 public:
 	std::string name;
