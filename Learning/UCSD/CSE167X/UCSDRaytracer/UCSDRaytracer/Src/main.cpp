@@ -72,23 +72,15 @@ int main(int argc, char* argv[])
 	FreeImage_Initialise();
 
 	// Image
-	Image image = Image("test.png", 300, 300, 300 / (float)300, 1, 1);
-	// VS really hates this line but my fix breaks the code
-	// ....so we'll figure it out later :p
-	//image.pixels = new uint8_t[3 * image.width * image.height];
-
-	readfile(argv[1], image);
-
-	// World
-	glm::vec3 lookFrom(0,0,1);
-	glm::vec3 lookAt(0,0,0);
-	float fov = 90;
-	glm::vec3 backgroundColor(0, 0, 0);
-	HittableList world = scene();
+	Image image("test.png", 300, 300, 300 / (float)300, 1, 1);
 
 	// Camera
-	glm::vec3 up(0, 1, 0);
-	camera cam(lookFrom, lookAt, up, fov, image.aspectRatio);
+	Camera camera(glm::vec3(0,0,1), glm::vec3(0,0,0), glm::vec3(0,1,0), 90, image.aspectRatio);
+	readfile(argv[1], image, camera);
+
+	// World
+	glm::vec3 backgroundColor(0, 0, 0);
+	HittableList world = scene();
 
 	for (int j = image.height - 1; j >= 0; --j)
 	{
@@ -102,7 +94,7 @@ int main(int argc, char* argv[])
 				float v = j / (float)(image.height - 1);
 				
 				// Get ray
-				Ray ray = cam.get_ray(u, v);
+				Ray ray = camera.get_ray(u, v);
 
 
 				// Test hit

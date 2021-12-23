@@ -4,10 +4,10 @@
 #include "globals.h"
 #include "ray.h"
 
-class camera
+class Camera
 {
 public:
-    camera(
+    Camera(
         glm::vec3 lookfrom,
         glm::vec3 lookat,
         glm::vec3 vup,

@@ -60,7 +60,7 @@ bool readvals(stringstream &s, const int numvals, GLfloat* values)
 }
 
 
-void readfile(const char* filename, Image& image) 
+void readfile(const char* filename, Image& image, Camera& camera) 
 {
     string str;// , cmd;
     ifstream in;
@@ -98,7 +98,7 @@ void readfile(const char* filename, Image& image)
                 }
                 else if (cmd == "output") {
                     if (s.fail()) {
-                        cout << "Failed reading output file name. Saving as test.png" << endl;
+                        cout << "Failed reading output file name. Saving as test.png." << endl;
                     }
                     else {
                         s >> image.name;
@@ -107,36 +107,15 @@ void readfile(const char* filename, Image& image)
                 else if (cmd == "camera") {
                     validinput = readvals(s, 10, values); // 10 values eye cen up fov
                     if (validinput) {
-
+                        camera = Camera(
+                            glm::vec3(values[0], values[1], values[2]),
+                            glm::vec3(values[3], values[4], values[5]),
+                            glm::vec3(values[6], values[7], values[8]),
+                            values[9],
+                            image.aspectRatio);
                     }
                 }
-                // Process the light, add it to database.
-                // Lighting Command
-                else if (cmd == "light") {
-                    //if (numused == numLights) { // No more Lights 
-                    //    cerr << "Reached Maximum Number of Lights " << numused << " Will ignore further lights\n";
-                    //} else {
-                    //    validinput = readvals(s, 8, values); // Position/color for lts.
-                    //    if (validinput) {
-                    //
-                    //        // YOUR CODE FOR HW 2 HERE. 
-                    //        // Note that values[0...7] shows the read in values 
-                    //        // Make use of lightposn[] and lightcolor[] arrays in variables.h
-                    //        // Those arrays can then be used in display too.
-                    //        lightposn[numused * 4 + 0] = values[0];
-                    //        lightposn[numused * 4 + 1] = values[1];
-                    //        lightposn[numused * 4 + 2] = values[2];
-                    //        lightposn[numused * 4 + 3] = values[3];
-                    //
-                    //        lightcolor[numused * 4 + 0] = values[4];
-                    //        lightcolor[numused * 4 + 1] = values[5];
-                    //        lightcolor[numused * 4 + 2] = values[6];
-                    //        lightcolor[numused * 4 + 3] = 1; // setting alpha to 1
-                    //        ++numused; 
-                    //    }
-                    //}
-                }
-                
+                                
                 // Material Commands 
                 // Ambient, diffuse, specular, shininess properties for each object.
                 // Filling this in is pretty straightforward, so I've left it in 
