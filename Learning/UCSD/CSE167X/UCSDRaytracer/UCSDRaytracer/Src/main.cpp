@@ -14,7 +14,7 @@
 #include "camera.h"
 #include "ray.h"
 #include "shape.h"
-#include "hittable.h"
+#include "hittablelist.h"
 #include "Transform.h"
 #include "readfile.h"
 #include "image.h"
@@ -47,7 +47,10 @@ vec3 getPixelColor(Ray ray, HittableList world, int depth)
 	if (world.hit(ray, minHitDistance, maxHitDistance, record))
 	{
 		vec3 objectColor(0xFF,0x00,0x00);
-		return objectColor;
+		float a = 0xff * record.material.ambient[0];
+		float b = 0xff * record.material.ambient[1];
+		float c = 0xff * record.material.ambient[2];
+		return vec3(a,b,c);
 	}
 
 	return backgroundColor;
@@ -76,11 +79,13 @@ int main(int argc, char* argv[])
 
 	// Camera
 	Camera camera(glm::vec3(0,0,1), glm::vec3(0,0,0), glm::vec3(0,1,0), 90, image.aspectRatio);
-	readfile(argv[1], image, camera);
+
+	HittableList world;
+	readfile(argv[1], image, camera, world);
 
 	// World
 	glm::vec3 backgroundColor(0, 0, 0);
-	HittableList world = scene();
+	//world = scene();
 
 	for (int j = image.height - 1; j >= 0; --j)
 	{

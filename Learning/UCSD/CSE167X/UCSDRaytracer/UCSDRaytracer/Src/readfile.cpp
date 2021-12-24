@@ -60,7 +60,7 @@ bool readvals(stringstream &s, const int numvals, GLfloat* values)
 }
 
 
-void readfile(const char* filename, Image& image, Camera& camera) 
+void readfile(const char* filename, Image& image, Camera& camera, HittableList& world) 
 {
     string str;// , cmd;
     ifstream in;
@@ -72,15 +72,20 @@ void readfile(const char* filename, Image& image, Camera& camera)
         // This is done using standard STL Templates 
         stack <mat4> transfstack; 
         transfstack.push(mat4(1.0));  // identity
+        
+        Material material;
+        int maxVertices = 0;
+        int vertexCount = 0;
+        vector<vec3> vertices;
 
-        getline (in, str); 
+        getline (in, str);
         while (in) {
             if ((str.find_first_not_of(" \t\r\n") != string::npos) && (str[0] != '#')) {
                 // Ruled out comment and blank lines 
 
                 stringstream s(str);
                 s >> cmd; 
-                int i; 
+                int i;
                 GLfloat values[10]; // Position and color for light, colors for others
                                     // Up to 10 params for cameras.  
                 bool validinput; // Validity of input 
@@ -126,72 +131,52 @@ void readfile(const char* filename, Image& image, Camera& camera)
                     validinput = readvals(s, 3, values); // colors 
                     if (validinput) {
                         for (i = 0; i < 3; i++) {
-                            //ambient[i] = values[i]; 
+                            material.ambient[i] = values[i]; 
                         }
                     }
                 } else if (cmd == "diffuse") {
                     validinput = readvals(s, 3, values); 
                     if (validinput) {
                         for (i = 0; i < 3; i++) {
-                            //diffuse[i] = values[i]; 
+                            material.diffuse[i] = values[i];
                         }
                     }
                 } else if (cmd == "specular") {
                     validinput = readvals(s, 3, values); 
                     if (validinput) {
                         for (i = 0; i < 3; i++) {
-                            //specular[i] = values[i]; 
+                            material.specular[i] = values[i];
                         }
                     }
                 } else if (cmd == "emission") {
                     validinput = readvals(s, 3, values); 
                     if (validinput) {
                         for (i = 0; i < 3; i++) {
-                            //emission[i] = values[i]; 
+                            material.emission[i] = values[i];
                         }
                     }
                 } else if (cmd == "shininess") {
                     validinput = readvals(s, 1, values); 
                     if (validinput) {
-                        //shininess = values[0]; 
+                        material.shininess = values[0]; 
                     }
                 } 
 
                 // I've left the code for loading objects in the skeleton, so 
                 // you can get a sense of how this works.  
                 // Also look at demo.txt to get a sense of why things are done this way.
-                else if (cmd == "sphere") {
-                    //if (numobjects == maxobjects) { // No more objects 
-                    //    cerr << "Reached Maximum Number of Objects " << numobjects << " Will ignore further objects\n";
-                    //} else {
-                    //    validinput = readvals(s, 1, values); 
-                    //    if (validinput) {
-                    //        object * obj = &(objects[numobjects]); 
-                    //        obj->size = values[0]; 
+                else if (cmd == "sphere") {   
+                    validinput = readvals(s, 4, values); 
+                    if (validinput) {                      
+                        vec3 center(values[0], values[1], values[2]);
+                        float radius = values[3];
 
-                    //        // Set the object's light properties
-                    //        for (i = 0; i < 4; i++) {
-                    //            (obj->ambient)[i] = ambient[i]; 
-                    //            (obj->diffuse)[i] = diffuse[i]; 
-                    //            (obj->specular)[i] = specular[i]; 
-                    //            (obj->emission)[i] = emission[i];
-                    //        }
-                    //        obj->shininess = shininess; 
+                        // TODO: figure out transforms
+                        mat4 transform = transfstack.top();
 
-                    //        // Set the object's transform
-                    //        obj->transform = transfstack.top(); 
-
-                    //        // Set the object's type
-                    //        if (cmd == "sphere") {
-                    //            obj->type = sphere; 
-                    //        } else if (cmd == "cube") {
-                    //            obj->type = cube; 
-                    //        } else if (cmd == "teapot") {
-                    //            obj->type = teapot; 
-                    //        }
-                    //    }
-                    //    ++numobjects; 
-                    //}
+                        Sphere sphere(center, radius, material, transform);
+                        world.add(make_shared<Sphere>(sphere));
+                    }
                 }
 
                 else if (cmd == "translate") {
@@ -231,9 +216,33 @@ void readfile(const char* filename, Image& image, Camera& camera)
                 //else if (cmd == "directional") {}
                 else if (cmd == "point") {}
                 //else if (cmd == "attenuation") {}
-                else if (cmd == "maxverts") {}
-                else if (cmd == "vertex") {}
-                else if (cmd == "tri") {}
+                else if (cmd == "maxverts") {
+                    validinput = readvals(s, 1, values);
+                    if (validinput) {
+                        maxVertices = values[0];
+                    }
+                }
+                else if (cmd == "vertex") {
+                    validinput = readvals(s, 3, values);
+                    if (validinput && vertexCount < maxVertices) {
+                        vertices.push_back(vec3(values[0], values[1], values[2]));
+                        vertexCount++;
+                    }
+                }
+                else if (cmd == "tri") {
+                    validinput = readvals(s, 3, values);
+                    if (validinput) {
+                        vec3 vectorA = vertices[values[0]];
+                        vec3 vectorB = vertices[values[1]];
+                        vec3 vectorC = vertices[values[2]];
+
+                        // TODO: figure out transforms
+                        mat4 transform = transfstack.top();
+
+                        Triangle tri(vectorA, vectorB, vectorC, material, transform);
+                        world.add(make_shared<Triangle>(tri));
+                    }
+                }
 
                 else {
                     cerr << "Unknown Command: " << cmd << " Skipping \n"; 

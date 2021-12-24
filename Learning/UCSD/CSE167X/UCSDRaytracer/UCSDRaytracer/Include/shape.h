@@ -10,13 +10,17 @@ public:
 	Sphere(glm::vec3 center, float radius)
 		: center(center), radius(radius)
 	{};
+	Sphere(glm::vec3 center, float radius, Material material, mat4 transform)
+		: center(center), radius(radius), material(material), transform(transform)
+	{};
 
-	virtual bool hit(
+	inline virtual bool hit(
 		const Ray& r, float minDistance, float maxDistance, HitRecord& rec) const override;
 
 public:
 	glm::vec3 center;
 	float radius;
+	Material material;
 	mat4 transform = mat4(1.0);
 };
 
@@ -42,6 +46,7 @@ bool Sphere::hit(const Ray& ray, float minDistance, float maxDistance, HitRecord
 
 	rec.intersectDistance = root;
 	rec.hitPoint = ray.at(root);
+	rec.material = material;
 
 	return true;
 }
@@ -52,13 +57,18 @@ public:
 	Triangle(glm::vec3 vertexA, glm::vec3 vertexB, glm::vec3 vertexC)
 		: vertexA(vertexA), vertexB(vertexB), vertexC(vertexC)
 	{};
-	virtual bool hit(
+	Triangle(glm::vec3 vertexA, glm::vec3 vertexB, glm::vec3 vertexC, Material material, mat4 transfom)
+		: vertexA(vertexA), vertexB(vertexB), vertexC(vertexC), material(material), transform(transform)
+	{};
+
+	inline virtual bool hit(
 		const Ray& r, float minDistance, float maxDistance, HitRecord& rec) const override;
 
 public:
 	glm::vec3 vertexA;
 	glm::vec3 vertexB;
 	glm::vec3 vertexC;
+	Material material;
 	mat4 transform = mat4(1.0);
 };
 
@@ -83,6 +93,7 @@ bool Triangle::hit(const Ray& ray, float minDistance, float maxDistance, HitReco
 	{
 		rec.intersectDistance = intersectionDistance;
 		rec.hitPoint = ray.at(intersectionDistance);
+		rec.material = material;
 		return true;
 	}
 }
